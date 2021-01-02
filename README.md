@@ -32,7 +32,7 @@ Icon | Key | Description
 <img src="src/Icons/keyboard.png" alt="Keyboard Icon" /> | `K` | Shows a window containing all Key Bindings for the program.
 <img src="src/Icons/file.png" alt="File Icon" /> | | When the **OPEN** button is pressed, this icon appears next to all valid `.golf` files.
 <img src="src/Icons/error.png" alt="Error Icon" /> | | If a `.golf` file is corrupted, the error icon will appear next to it when the **OPEN** button is clicked and all `.golf` files are listed.
-<img src="src/Icons/speedometer.png" alt="Speedometer Icon" /> | | Shows the current speed the simulation.
+<img src="src/Icons/speedometer.gif" alt="Speedometer Icon" /> | | Shows the current speed the simulation.
 
 ## `.golf` Files
 
@@ -46,14 +46,14 @@ The `.golf` file format is really simple. It is a series of 1's and 0's (bits) t
 
 When the **Snapshot** button is pressed, the current state of the simulation board is saved as a `.png` file. An example is shown below.
 
-<img src="src/Snapshot.png" alt="Example Snapshot" />
+<img src="Snapshot.png" alt="Example Snapshot" />
 <br />
 
 ## GIF Files
 
 When the **Record** button is pressed, any time the **Next** or **Start** buttons are pressed, the board states are recorded. Once the user presses the **Record** button again, this will toggle off Recording Mode and will begin converting the recorded states to a `.gif` file. An example is shown below.
 
-<img src="src/Recording.gif" alt="Recording GIF" />
+<img src="Recording.gif" alt="Recording GIF" />
 <br />
 
 # Parameters
@@ -61,7 +61,7 @@ When the **Record** button is pressed, any time the **Next** or **Start** button
 There are several parameters you can tune to change your experience with this app. The files they are found in along with a description are shown below.
 
 File | Constant Name | Default | Description
---- | --- | ---
+--- | --- | --- | ---
 `src/main/main.kt` | `GRID` | `50` | The size of the simulation grid. This constant should be greater than 10. There is no hard limit on the upper bound of this number, however at around `300` the squares on the simulation board become so small that they're almost invisible.
 `src/main/Snapshot.java` | `RESOLUTION` | `20` | This value determines the "resolution" of the `.png` and `.gif` files that are created. The higher this number, the higher the resolution. The higher this number, the slower the Snapshot/Recording process will be.
 `src/main/Snapshot.java` | `GIF_SPEED` | `1` | This value determines the framerate of the `.gif` files that are created. As long as it is greater than 1, you're good to go.
