@@ -7,7 +7,6 @@ import java.awt.Font
 import java.awt.event.*
 import java.io.File
 import java.lang.Integer.min
-import java.util.ArrayList
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 import javax.swing.SwingUtilities
@@ -281,7 +280,14 @@ fun main()
                 buttons["Record"]?.text = "Record"
                 buttons["Record"]?.icon = icons["Record"]
                 if (File("__recording__.golf").length() != 0L) {
+                    val progressFrame = JFrame("Converting to Gif...")
+                    progressFrame.setLocationRelativeTo(null)
+                    progressFrame.defaultCloseOperation = JFrame.DO_NOTHING_ON_CLOSE
+                    progressFrame.size = Dimension(frame.width / 3, frame.height / 6)
+                    progressFrame.isResizable = false
+                    progressFrame.isVisible = true
                     Snapshot.convertToGIF(GRID)
+                    progressFrame.dispose()
                 }
                 frame.isEnabled = true
                 STARTED_RECORDING = false

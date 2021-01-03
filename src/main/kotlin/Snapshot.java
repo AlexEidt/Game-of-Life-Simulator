@@ -4,10 +4,14 @@
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -39,19 +43,13 @@ public class Snapshot {
 
         int scale = RESOLUTION;
         int gridScaled = size * scale;
-        BufferedImage bufferedImage = new BufferedImage(gridScaled, gridScaled, BufferedImage.TYPE_BYTE_BINARY);
-        for (int row = 0; row < gridScaled; row += scale) {
-            int rowScale = row / scale * size;
-            for (int sh = 0; sh < scale; sh++) {
-                for (int col = 0; col < gridScaled; col += scale) {
-                    if (!board.contains(rowScale + col / scale)) {
-                        for (int sw = 0; sw < scale; sw++) {
-                            bufferedImage.setRGB(col + sw, row + sh, 11111111);
-                        }
-                    }
-                }
-            }
+        BufferedImage bufferedImage = new BufferedImage(gridScaled, gridScaled, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = bufferedImage.createGraphics();
+        g.setColor(Color.BLACK);
+        for (Integer coordinate : board) {
+            g.fillRect(coordinate % size * scale, coordinate / size * scale, scale, scale);
         }
+
         ImageIO.write(bufferedImage, "PNG", file);
     }
 
@@ -116,14 +114,14 @@ public class Snapshot {
      */
     public static ArrayList<String> getFiles() throws FileNotFoundException {
         ArrayList<String> result = new ArrayList<>();
-        Pattern pattern = Pattern.compile("[0-9,:]+");
+        Pattern pattern = Pattern.compile("[0-9]+:([0-9]+,?)+");
         for (File file : new File(".").listFiles()) {
             String fileName = file.getName();
             if (fileName.endsWith(".golf")) {
                 Scanner fileReader = new Scanner(file);
                 if (fileReader.hasNextLine()) {
                     String line = fileReader.nextLine();
-                    if (!pattern.matcher(line).replaceAll("").isBlank()) {
+                    if (!pattern.matcher(line).replaceAll("").isBlank() && !line.endsWith(",")) {
                         result.add("ERROR" + fileName);
                         continue;
                     }
