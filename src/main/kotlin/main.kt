@@ -139,9 +139,6 @@ fun main()
     var thread = Thread {
         while (gameIterator.hasNext()) {
             buttons["Next"]?.doClick()
-            if (IS_RECORDING) {
-                File("__recording__.golf").appendText("$board\n")
-            }
             Thread.sleep((slider.value.toLong() - SLIDER) * -1)
         }
     }
@@ -155,6 +152,9 @@ fun main()
                 if (!IS_RUNNING) {
                     buttons["Snapshot"]?.isEnabled = true
                     buttons["Save"]?.isEnabled = true
+                }
+                if (IS_RECORDING) {
+                    File("__recording__.golf").appendText("$board\n")
                 }
             }
             frame.cursor = Cursor.getDefaultCursor();
@@ -189,9 +189,6 @@ fun main()
                 thread = Thread {
                     while (gameIterator.hasNext()) {
                         buttons["Next"]?.doClick()
-                        if (IS_RECORDING) {
-                            File("__recording__.golf").appendText("$board\n")
-                        }
                         Thread.sleep((slider.value.toLong() - SLIDER) * -1)
                     }
                 }
