@@ -77,7 +77,7 @@ fun main()
     val keyBindings = mapOf(
         "Next_RIGHT ARROW" to KeyEvent.VK_RIGHT,
         "Reset_BACK SPACE" to KeyEvent.VK_BACK_SPACE,
-        "Start/Stop_Z" to KeyEvent.VK_Z,
+        "Start/Stop_SPACE" to KeyEvent.VK_SPACE,
         "Erase_E" to KeyEvent.VK_E,
         "Draw_D" to KeyEvent.VK_D,
         "Save_Shift+S" to KeyEvent.VK_S,

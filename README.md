@@ -22,7 +22,7 @@ Icon | Key | Description
 --- | --- | ---
 <img src="src/Icons/next.png" alt="Next Icon" /> | `RIGHT ARROW` | Moves the simulation to the next generation according to the rules above.
 <img src="src/Icons/reset.png" alt="Reset Icon" /> | `BACKSPACE` | Clears the simulation board.
-<img src="src/Icons/startstop.gif" alt="Start/Stop Icon" /> | `Z` | Starts/Stops the simulation.
+<img src="src/Icons/startstop.gif" alt="Start/Stop Icon" /> | `SPACE` | Starts/Stops the simulation.
 <img src="src/Icons/eraser.png" alt="Eraser Icon" /> | `E` | Toggles Eraser Mode to be on. Allows user to erase squares on the simulation board.
 <img src="src/Icons/draw.png" alt="Draw Icon" /> | `D` | Toggles Draw Mode to be on. Allows user to draw on the simulation board.
 <img src="src/Icons/save.png" alt="Save Icon" /> | `SHIFT+S` | Saves the current state of the board as a `.golf` file.
