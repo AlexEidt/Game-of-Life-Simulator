@@ -21,9 +21,6 @@ import javax.swing.KeyStroke
 
 import javax.swing.JComponent
 
-
-
-
 var GRID = 50 // Length of one side of Game of Life Grid.
 const val ICON_SIZE = 35 // Size of Icons.
 var IS_RUNNING = false
@@ -80,7 +77,7 @@ fun main()
     val keyBindings = mapOf(
         "Next_RIGHT ARROW" to KeyEvent.VK_RIGHT,
         "Reset_BACK SPACE" to KeyEvent.VK_BACK_SPACE,
-        "Start/Stop_SPACE" to KeyEvent.VK_SPACE,
+        "Start/Stop_Z" to KeyEvent.VK_Z,
         "Erase_E" to KeyEvent.VK_E,
         "Draw_D" to KeyEvent.VK_D,
         "Save_Shift+S" to KeyEvent.VK_S,
@@ -250,11 +247,7 @@ fun main()
     })
     buttons["Snapshot"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) {
-            val boolList: ArrayList<Boolean> = arrayListOf()
-            for (i in 0 until GRID * GRID) {
-                boolList.add(i in set)
-            }
-            snapshot(boolList, GRID, -1);
+            snapshot(set, GRID, -1);
             frame.cursor = Cursor.getDefaultCursor();
             buttons["Snapshot"]?.isEnabled = false
             buttons["Erase"]?.isEnabled = true
@@ -269,11 +262,7 @@ fun main()
             while (!file.createNewFile()) {
                 file = File("GameOfLife${index++}.golf")
             }
-            val intList: MutableList<Int> = mutableListOf()
-            for (i in 0 until GRID * GRID) {
-                intList.add(if (i in set) 1 else 0)
-            }
-            file.writeText(intList.joinToString(separator = ""))
+            file.writeText("$GRID:${set.joinToString(separator = ",")}")
             frame.cursor = Cursor.getDefaultCursor();
             buttons["Save"]?.isEnabled = false
             buttons["Erase"]?.isEnabled = true
@@ -319,32 +308,26 @@ fun main()
                     fileButton.addActionListener(object : AbstractAction() {
                         override fun actionPerformed(e: ActionEvent?) {
                             panel.clear()
-                            val boardString = File(file).readLines()[0]
-                            if ('1' in boardString) {
+                            val boardString = File(file).readLines()[0].split(":")
+                            val size = boardString[0].toInt()
+                            val onSet = (boardString[1].split(",").map {
+                                it.toInt()
+                            }).toMutableSet()
+                            if (onSet.size > 0) {
                                 buttons["Start/Stop"]?.isEnabled = true
                                 buttons["Reset"]?.isEnabled = true
                                 buttons["Next"]?.isEnabled = true
                                 buttons["Snapshot"]?.isEnabled = true
                                 buttons["Save"]?.isEnabled = true
                             }
-                            if (boardString.length != GRID * GRID) {
-                                val newSet = mutableSetOf<Int>()
-                                for ((i, bit) in boardString.withIndex()) {
-                                    if (bit == '1') {
-                                        panel.addValue(i)
-                                        newSet.add(i)
-                                    }
-                                }
-                                GRID = sqrt(boardString.length.toDouble()).toInt()
-                                set = newSet
+                            if (size != GRID) {
+                                GRID = size
+                                set = onSet
                                 board = Board(GRID, set)
                                 gameIterator = board.iterator()
-                            } else {
-                                for ((i, bit) in boardString.withIndex()) {
-                                    if (bit == '1') {
-                                        panel.addValue(i)
-                                    }
-                                }
+                            }
+                            for (coordinate in onSet) {
+                                panel.addValue(coordinate)
                             }
                             frame.repaint()
                         }

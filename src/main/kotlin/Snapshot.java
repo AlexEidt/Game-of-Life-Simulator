@@ -4,6 +4,7 @@
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +25,7 @@ public class Snapshot {
      * @param recording if the user is recording, recording >= 0, otherwise recording = -1.
      * @throws IOException
      */
-    public static void snapshot(ArrayList<Boolean> board, int size, int recording) throws IOException {
+    public static void snapshot(Set<Integer> board, int size, int recording) throws IOException {
         File file;
         if (recording == -1) {
             file = new File("Snapshot.png");
@@ -43,7 +44,7 @@ public class Snapshot {
             int rowScale = row / scale * size;
             for (int sh = 0; sh < scale; sh++) {
                 for (int col = 0; col < gridScaled; col += scale) {
-                    if (!board.get(rowScale + col / scale)) {
+                    if (!board.contains(rowScale + col / scale)) {
                         for (int sw = 0; sw < scale; sw++) {
                             bufferedImage.setRGB(col + sw, row + sh, 11111111);
                         }
@@ -65,12 +66,11 @@ public class Snapshot {
         // Grab the output image type from the first image in the sequence.
         File recording = new File("__recording__.golf");
         Scanner file = new Scanner(recording);
-        ArrayList<Boolean> board = new ArrayList<>(size * size);
+        Set<Integer> board = new HashSet<>();
         int index = 0;
         while (file.hasNextLine()) {
-            String boardString = file.nextLine();
-            for (char bit : boardString.toCharArray()) {
-                board.add(bit == 49); // 49 is ASCII '1' character.
+            for (String coordinate : file.nextLine().split(",")) {
+                board.add(Integer.parseInt(coordinate));
             }
             snapshot(board, size, index++);
             board.clear();
@@ -80,8 +80,9 @@ public class Snapshot {
 
         File firstFile = new File("_r0.png");
         BufferedImage firstImage = ImageIO.read(firstFile);
+        firstFile.delete();
 
-        // Create a new BufferedOutputStream with the last argument.
+        // Create output gif file.
         File recorded = new File("Recording.gif");
         int i = 1;
         while (!recorded.createNewFile()) {
@@ -90,20 +91,16 @@ public class Snapshot {
 
         ImageOutputStream output = new FileImageOutputStream(recorded);
 
-        // Create a gif sequence with the type of the first image, 1 second
-        // between frames, which loops continuously.
+        // Create gif using PNG frames.
         GifSequenceWriter writer =
                 new GifSequenceWriter(output, firstImage.getType(), GIF_SPEED, LOOP_CONTINUOUSLY);
 
-        // Write out the first image to our sequence.
         writer.writeToSequence(firstImage);
         for(i = 1; i < index - 1; i++) {
             File temp = new File("_r" + i + ".png");
-            BufferedImage nextImage = ImageIO.read(temp);
-            writer.writeToSequence(nextImage);
+            writer.writeToSequence(ImageIO.read(temp));
             temp.delete();
         }
-        firstFile.delete();
         new File("_r" + (index - 1) + ".png").delete();
 
         writer.close();
@@ -124,20 +121,17 @@ public class Snapshot {
             if (fileName.endsWith(".golf")) {
                 Scanner fileReader = new Scanner(file);
                 if (fileReader.hasNextLine()) {
-                    String boardString = fileReader.nextLine();
-                    double squareRoot = Math.sqrt(boardString.length());
-                    if (!boardString.isBlank()
-                            && boardString
-                            // Check if String is made up of only 0's and 1's.
-                            .replaceAll("0", "")
-                            .replaceAll("1", "")
-                            .isBlank()
-                            // Check if number of bits is a perfect square.
-                            && squareRoot - Math.floor(squareRoot) == 0)
-                    {
-                        result.add(fileName);
-                    } else { // If there is an error append "ERROR" to signify.
-                        result.add("ERROR" + fileName);
+                    String line = fileReader.nextLine();
+                    String[] data = line.split(":");
+                    int size = Integer.parseInt(data[0]);
+                    size *= size;
+                    result.add(fileName);
+                    for (String coordinate : data[1].split(",")) {
+                        int c = Integer.parseInt(coordinate);
+                        if (c >= size || c < 0) {
+                            result.set(result.size() - 1, "ERROR" + fileName);
+                            break;
+                        }
                     }
                 } else { // If there is an error append "ERROR" to signify.
                     result.add("ERROR" + fileName);

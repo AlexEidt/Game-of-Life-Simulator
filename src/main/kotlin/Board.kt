@@ -112,11 +112,7 @@ class Board(var size: Int, var start: MutableSet<Int>) {
     }
 
     /**
-     * Returns the board as a series of bits representing whether each cell is on or off.
+     * Returns the board as the coordinates of the cells that are "true".
      */
-    override fun toString(): String {
-        return (this.board.map {
-            if (it) 1 else 0
-        }).joinToString(separator = "")
-    }
+    override fun toString(): String = this.start.joinToString(separator = ",")
 }
