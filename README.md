@@ -78,7 +78,7 @@ NOTE: The directory structure graphic above was made with the [Directory Grapher
 
 # Running the Program
 
-Create a new Kotlin Project in an IDE ([IntelliJ](https://www.jetbrains.com/idea/download/#section=windows) is recommended) and in the `src` folder. Note that there is an `Icons` folder in the `src` folder where the program stores all the icons. It's important that the structure of the `src` directory remains as is or else Icons will not appear in the app.
+Create a new Kotlin Project in an IDE ([IntelliJ](https://www.jetbrains.com/idea/download/#section=windows) is recommended) and copy in the `src` folder. Note that there is an `Icons` folder in the `src` folder where the program stores all the icons. It's important that the structure of the `src` directory remains as is or else Icons will not appear in the app.
 
 # Acknowledgements
 
