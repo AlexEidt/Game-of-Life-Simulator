@@ -11,7 +11,7 @@ The Game of Life is basically a board of cells. Cells can be either alive or dea
 
 This app allows the user to create their own starting conditions and simulate according to these rules. Additionally, the user can save/load in starting conditions from `.golf` (Game of Life File) files. The user can record snapshots of one frame of the simulation, or record a simulation and convert it to a `.gif`.
 
-## The App
+# The App
 
 <img src="documentation.gif" alt="GIF Showing the functionality of the Game of Life Simulator app" />
 <br />
@@ -62,7 +62,7 @@ There are several parameters you can tune to change your experience with this ap
 
 File | Constant Name | Default | Description
 --- | --- | --- | ---
-`src/main/main.kt` | `GRID` | `50` | The size of the simulation grid. This constant should be greater than 10. There is no hard limit on the upper bound of this number, however at around `300` the squares on the simulation board become so small that they're almost invisible.
+`src/main/main.kt` | `GRID` | `50` | The size of the simulation grid. This constant should be greater than `10`. There is no hard limit on the upper bound of this number, however at around `300` the squares on the simulation board become so small that they're almost invisible.
 `src/main/Snapshot.java` | `RESOLUTION` | `20` | This value determines the "resolution" of the `.png` and `.gif` files that are created. The higher this number, the higher the resolution. The higher this number, the slower the Snapshot/Recording process will be.
 `src/main/Snapshot.java` | `GIF_SPEED` | `1` | This value determines the framerate of the `.gif` files that are created. As long as it is greater than 1, you're good to go.
 `src/main/Snapshot.java` | `LOOP_CONTINOUSLY` | `true` | This value determines whether the `.gif` files loop continuously or not.
@@ -78,7 +78,7 @@ NOTE: The directory structure graphic above was made with the [Directory Grapher
 
 # Running the Program
 
-Create a new Kotlin Project in an IDE (IntelliJ is recommended) and in the `src` folder. Note that there is an `Icons` folder in the `src` folder where the program stores all the icons. It's important that the structure of the `src` directory remains as is or else Icons will not appear in the app.
+Create a new Kotlin Project in an IDE ([IntelliJ](https://www.jetbrains.com/idea/download/#section=windows) is recommended) and in the `src` folder. Note that there is an `Icons` folder in the `src` folder where the program stores all the icons. It's important that the structure of the `src` directory remains as is or else Icons will not appear in the app.
 
 # Acknowledgements
 
