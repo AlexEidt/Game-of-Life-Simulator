@@ -26,6 +26,7 @@ const val ICON_SIZE = 35 // Size of Icons.
 var IS_RUNNING = false
 var IS_DRAWING = false
 var IS_RECORDING = false
+var STARTED_RECORDING = false
 var SLIDER = 200
 
 fun main()
@@ -182,6 +183,10 @@ fun main()
     })
     buttons["Start/Stop"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent) {
+            if (IS_RECORDING && !STARTED_RECORDING) {
+                File("__recording__.golf").appendText("${set.joinToString(separator = ",")}\n")
+                STARTED_RECORDING = true
+            }
             if (IS_RUNNING) {
                 if (thread.isAlive) {
                     thread.stop()
@@ -201,6 +206,7 @@ fun main()
                 buttons["Save"]?.isEnabled = true
                 buttons["Record"]?.isEnabled = true
                 buttons["Search"]?.isEnabled = true
+                frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
             } else {
                 thread.start()
                 buttons["Start/Stop"]?.text = "Stop"
@@ -212,6 +218,7 @@ fun main()
                 buttons["Save"]?.isEnabled = false
                 buttons["Record"]?.isEnabled = false
                 buttons["Search"]?.isEnabled = false
+                frame.defaultCloseOperation = JFrame.DO_NOTHING_ON_CLOSE
             }
             IS_RUNNING = !IS_RUNNING
             IS_DRAWING = false
@@ -277,6 +284,7 @@ fun main()
                     Snapshot.convertToGIF(GRID)
                 }
                 frame.isEnabled = true
+                STARTED_RECORDING = false
             } else {
                 buttons["Record"]?.text = "Recording"
                 buttons["Record"]?.icon = icons["Recording"]

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 public class Snapshot {
@@ -115,12 +116,17 @@ public class Snapshot {
      */
     public static ArrayList<String> getFiles() throws FileNotFoundException {
         ArrayList<String> result = new ArrayList<>();
+        Pattern pattern = Pattern.compile("[0-9,:]+");
         for (File file : new File(".").listFiles()) {
             String fileName = file.getName();
             if (fileName.endsWith(".golf")) {
                 Scanner fileReader = new Scanner(file);
                 if (fileReader.hasNextLine()) {
                     String line = fileReader.nextLine();
+                    if (!pattern.matcher(line).replaceAll("").isBlank()) {
+                        result.add("ERROR" + fileName);
+                        continue;
+                    }
                     String[] data = line.split(":");
                     int size = Integer.parseInt(data[0]);
                     size *= size;
