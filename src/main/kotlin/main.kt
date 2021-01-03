@@ -353,6 +353,7 @@ fun main()
             IS_DRAWING = false
             buttons["Erase"]?.isEnabled = true
             buttons["Draw"]?.isEnabled = true
+            frame.cursor = Cursor.getDefaultCursor();
         }
     })
     buttons["Key Bindings"]?.addActionListener(object : AbstractAction() {
@@ -377,6 +378,11 @@ fun main()
             keys.setLocationRelativeTo(null)
             keys.isResizable = false
             keys.isVisible = true
+
+            IS_DRAWING = false
+            buttons["Erase"]?.isEnabled = true
+            buttons["Draw"]?.isEnabled = true
+            frame.cursor = Cursor.getDefaultCursor();
         }
     })
 
