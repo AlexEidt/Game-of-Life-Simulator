@@ -85,3 +85,7 @@ Create a new Kotlin Project in an IDE ([IntelliJ](https://www.jetbrains.com/idea
 The Java Code found in the `GifSequenceWriter.java` file under `src/main/kotlin` was made by **Elliot Kroo**. This work is licensed under the Creative Commons Attribution 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
 
 Find the code on his website: https://web.archive.org/web/20191226041038/elliot.kroo.net/software/java/GifSequenceWriter/GifSequenceWriter.java
+
+---
+
+All Icons are from [Microsoft Office](https://support.microsoft.com/en-us/office/insert-icons-in-microsoft-office-e2459f17-3996-4795-996e-b9a13486fa79).
