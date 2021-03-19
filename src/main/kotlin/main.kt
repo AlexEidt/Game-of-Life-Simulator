@@ -489,7 +489,6 @@ fun main()
     frame.add(menuPanel, BorderLayout.EAST)
     frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     frame.extendedState = JFrame.MAXIMIZED_BOTH
-    frame.isResizable = false
     frame.isVisible = true
 }
 
