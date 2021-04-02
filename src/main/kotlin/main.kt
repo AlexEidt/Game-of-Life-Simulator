@@ -414,7 +414,7 @@ fun main()
                 val coordinateX: Int = (e.xOnScreen - w) / size
                 val coordinateY: Int = (e.yOnScreen - h) / size
                 if (IS_DRAWING) {
-                    if (coordinateX in 0 until GRID && coordinateY in GRID / 25 until GRID + GRID / 25) {
+                    if (coordinateX in 0 until GRID && coordinateY in 0 until GRID + GRID / 25) {
                         panel.addValue(coordinateY * GRID + coordinateX - 2 * GRID)
                         buttons["Start/Stop"]?.isEnabled = true
                         buttons["Reset"]?.isEnabled = true
@@ -439,7 +439,7 @@ fun main()
                 val coordinateY: Int = (e.yOnScreen - h) / size
                 val coordinate = coordinateY * GRID + coordinateX - 2 * GRID
                 if (IS_DRAWING && coordinate in 0 until GRID * GRID) {
-                    if (coordinateX in 0 until GRID && coordinateY in GRID / 25 until GRID + GRID / 25) {
+                    if (coordinateX in 0 until GRID && coordinateY in 0 until GRID + GRID / 25) {
                         panel.addValue(coordinate)
                         buttons["Start/Stop"]?.isEnabled = true
                         buttons["Reset"]?.isEnabled = true
