@@ -7,25 +7,11 @@ import javax.swing.JPanel
 
 /**
  * The DrawPanel represents the "Playground" or "Simulation Area" on the
- * UI. It is the square box that shows the simulation.
+ * UI. It is the box that shows the simulation.
  *
- * @param coordinates the boxes to fill in on the board.
+ * @param board the Game of Life board.
  */
-class DrawPanel(private var coordinates: MutableSet<Int>) : JPanel() {
-    // Clears the DrawPanel.
-    fun clear() = this.coordinates.clear()
-
-    // Adds a new square to the DrawPanel.
-    fun addValue(value: Int) = this.coordinates.add(value)
-
-    // Removes a square from the DrawPanel.
-    fun removeValue(value: Int) = this.coordinates.remove(value)
-
-    // Changes the squares on the DrawPanel.
-    fun updateSet(set: MutableSet<Int>) {
-        this.coordinates = set
-    }
-
+class DrawPanel(var board: Board) : JPanel() {
     // Given the current squares in the "coordinates" set, updates the DrawPanel.
     public override fun paintComponent(g: Graphics) {
         g.color = Color.BLACK
@@ -43,7 +29,7 @@ class DrawPanel(private var coordinates: MutableSet<Int>) : JPanel() {
         g.drawLine(w, gridSizeH, gridSizeW, gridSizeH) // Bottom Left to Bottom Right.
 
         // Draw Squares for Game of Life Simulation.
-        for (coordinate in this.coordinates) {
+        for (coordinate in this.board.coordinates) {
             g.fillRect(
                 (coordinate % GRID) * size + w,
                 (coordinate / GRID) * size + h,

@@ -7,17 +7,26 @@
  * Represents the Game of Life Simulation.
  *
  * @param size the size of the board. Board will always be a size x size square.
- * @param start the cells of the board that are true.
+ * @param coordinates the cells of the board that are true.
  */
-class Board(var size: Int, var start: MutableSet<Int>) {
-    var board: MutableList<Boolean> = mutableListOf()
-    var remove: MutableSet<Int> = mutableSetOf()
-    var visited: MutableSet<Int> = mutableSetOf()
+class Board(val size: Int, val coordinates: MutableSet<Int>) {
+    private val board: BitMap = BitMap(coordinates, size, size)
+    private val remove: MutableSet<Int> = mutableSetOf()
+    private val visited: MutableSet<Int> = mutableSetOf()
+    private val set: MutableSet<Int> = mutableSetOf()
 
-    init {
-        for (i in 0 until this.size * this.size) {
-            this.board.add(i in start)
-        }
+    // Adds a new square to the DrawPanel.
+    fun addValue(value: Int) = this.coordinates.add(value)
+
+    // Removes a square from the DrawPanel.
+    fun removeValue(value: Int) = this.coordinates.remove(value)
+
+    // Clears the board.
+    fun clear() {
+        this.coordinates.clear();
+        this.board.clear()
+        this.remove.clear()
+        this.visited.clear()
     }
 
     /**
@@ -25,22 +34,18 @@ class Board(var size: Int, var start: MutableSet<Int>) {
      * which cells make it to the next generation. Once all cells are false, the iterator
      * stops.
      */
-    fun iterator(): Iterator<MutableSet<Int>> {
-        return object : Iterator<MutableSet<Int>> {
+    fun iterator(): Iterator<Int> {
+        return object : Iterator<Int> {
 
-            override fun hasNext(): Boolean = start.isNotEmpty()
+            override fun hasNext(): Boolean = coordinates.isNotEmpty()
 
-            override fun next(): MutableSet<Int> {
-                for (position in start) {
-                    board[position] = true
-                }
-                for (position in remove) {
-                    board[position] = false
-                }
+            override fun next(): Int {
+                for (position in coordinates)   board[position] = true
+                for (position in remove)        board[position] = false
                 remove.clear()
                 visited.clear()
-                val set: MutableSet<Int> = mutableSetOf()
-                for (position in start) {
+                set.clear()
+                for (position in coordinates) {
                     if (checkNeighbors(position)) {
                         set.add(position)
                     } else {
@@ -58,20 +63,21 @@ class Board(var size: Int, var start: MutableSet<Int>) {
                         }
                     }
                 }
-                start = set
-                return set
+                coordinates.clear()
+                coordinates.addAll(set)
+                return 0 // Dummy return because iterator has to return something
             }
         }
     }
 
-    private fun toInt(bool: Boolean) = if (bool) -1 else 1
+    private inline fun toInt(bool: Boolean) = if (bool) -1 else 1
 
     /**
      * Given a certain position on the board, returns the coordinates of all
      * neighbors. Positions on the boundaries of the board feature neighbors that
      * are false if the neighbor is out of bounds.
      */
-    private fun getNeighbors(position: Int): Array<Int> {
+    private inline fun getNeighbors(position: Int): Array<Int> {
         val isTop: Boolean = position / this.size == 0
         val isBottom: Boolean = position / this.size == this.size - 1
         val isLeft: Boolean = position % this.size == 0
@@ -79,6 +85,7 @@ class Board(var size: Int, var start: MutableSet<Int>) {
 
         val rowNext: Int = position + this.size
         val rowPrev: Int = position - this.size
+
         return arrayOf(
             (position + 1) * toInt(isRight), // Right
             if (position == 0 || isLeft) -1 else position - 1, // Left
@@ -96,7 +103,7 @@ class Board(var size: Int, var start: MutableSet<Int>) {
      * will make it to the next generation given its neighbors and the rules specified
      * in this method.
      */
-    private fun checkNeighbors(position: Int): Boolean {
+    private inline fun checkNeighbors(position: Int): Boolean {
         var valid = 0
         for (neighbor in getNeighbors(position)) {
             if (neighbor >= 0 && this.board[neighbor]) {
@@ -114,5 +121,5 @@ class Board(var size: Int, var start: MutableSet<Int>) {
     /**
      * Returns the board as the coordinates of the cells that are "true".
      */
-    override fun toString(): String = this.start.joinToString(separator = ",")
+    override fun toString(): String = this.coordinates.joinToString(separator = ",")
 }

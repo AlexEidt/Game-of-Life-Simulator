@@ -10,10 +10,11 @@
 
 
 import javax.imageio.*;
-import javax.imageio.metadata.*;
-import javax.imageio.stream.*;
-import java.awt.image.*;
-import java.io.*;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.RenderedImage;
+import java.io.IOException;
 import java.util.Iterator;
 
 public class GifSequenceWriter {
@@ -26,7 +27,7 @@ public class GifSequenceWriter {
      *
      * @param outputStream the ImageOutputStream to be written to
      * @param imageType one of the imageTypes specified in BufferedImage
-     * @param timeBetweenFramesMS the time between frames in miliseconds
+     * @param timeBetweenFramesMS the time between frames in milliseconds
      * @param loopContinuously wether the gif should loop repeatedly
      * @throws IIOException if no gif ImageWriters are found
      *
