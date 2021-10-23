@@ -2,3 +2,8 @@
 /out
 
 *.iml
+
+# Game of Life Simulator Generated File directories
+/Recordings
+/Snapshots
+/Saved

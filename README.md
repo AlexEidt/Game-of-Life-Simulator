@@ -20,15 +20,15 @@ The simulator comes with the following features:
 
 Icon | Key | Description
 --- | --- | ---
-<img src="src/Icons/next.png" alt="Next Icon" width=50px /> | `RIGHT ARROW` | Moves the simulation to the next generation.
-<img src="src/Icons/reset.png" alt="Reset Icon" width=50px /> | `BACKSPACE` | Clears the simulation board.
-<img src="src/Icons/random.png" alt="Random Icon" width=50px /> | `D` | Randomly fills the simulation board.
-<img src="src/Icons/save.png" alt="Save Icon" width=50px /> | `S` | Saves the current state of the board as a `.golf` file.
-<img src="src/Icons/snapshot.png" alt="Snapshot Icon" width=50px /> | `C` | Saves the current state of the board as a `.png` file.
+<img src="src/Icons/Next.png" alt="Next Icon" width=50px /> | `RIGHT ARROW` | Moves the simulation to the next generation.
+<img src="src/Icons/Reset.png" alt="Reset Icon" width=50px /> | `BACKSPACE` | Clears the simulation board.
+<img src="src/Icons/Random.png" alt="Random Icon" width=50px /> | `D` | Randomly fills the simulation board.
+<img src="src/Icons/Save.png" alt="Save Icon" width=50px /> | `S` | Saves the current state of the board as a `.golf` file.
+<img src="src/Icons/Snapshot.png" alt="Snapshot Icon" width=50px /> | `C` | Saves the current state of the board as a `.png` file.
 <img src="src/Icons/recordrecording.gif" alt="Recording Icon" width=50px /> | `R` | Toggles Recording Mode. If recording mode is on, any changes made to the board by clicking **NEXT** or **START/STOP** are recorded and saved into a `.gif` file.
-<img src="src/Icons/search.png" alt="Search Files Icon" width=50px /> | `F` | Opens all `.golf` files and allows the user to load in a new simulation state.
-<img src="src/Icons/plus.png" alt="Zoom In Files Icon" width=50px /> | `=` | Zooms in on the simulation board.
-<img src="src/Icons/minus.png" alt="Zoom Out Files Icon" width=50px /> | `-` | Zooms out on the simulation board.
+<img src="src/Icons/Open.png" alt="Search Files Icon" width=50px /> | `F` | Opens all `.golf` files and allows the user to load in a new simulation state.
+<img src="src/Icons/Zoom In.png" alt="Zoom In Files Icon" width=50px /> | `=` | Zooms in on the simulation board.
+<img src="src/Icons/Zoom Out.png" alt="Zoom Out Files Icon" width=50px /> | `-` | Zooms out on the simulation board.
 
 ## `golf` File Format and Loading Files
 
@@ -53,6 +53,11 @@ The `.golfr` file format is the s file format used to store multiple frames of s
 Once the user presses the `Record` button, a file called `Recording{X}.golfr` (`X` is a number) is created. This file will contain the state of the board for every frame that was recorded. To convert this file to a video format, use `convert.py`.
 
 `convert.py` usage:
+
+```
+cd Recordings
+python convert.py -f FILENAME -t TYPE -r RESOLUTION -fps FPS
+```
 
 ```
 usage: convert.py [-h] [-f FILENAME] [-t TYPE] [-r RESOLUTION] [-fps FPS]

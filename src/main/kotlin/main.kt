@@ -16,10 +16,17 @@ import kotlin.math.sqrt
 
 var GRID = 200 // Length of one side of Game of Life Grid.
 var RECORDING_FILE = "" // Recording file name
+var RECORDINGS_DIR = joinPath("Recordings")
+var SNAPSHOTS_DIR = joinPath("Snapshots")
+var SAVED_DIR = joinPath("Saved")
+
 var IS_RECORDING = false
 
 fun main() {
     assertGrid(GRID)
+    File(RECORDINGS_DIR).mkdir()  // Directory for recording .golfr files
+    File(SNAPSHOTS_DIR).mkdir()   // Directory for Snapshot .png files
+    File(SAVED_DIR).mkdir()       // Directory for .golf files
 
     val frame = JFrame("Conway's Game of Life")
     var panel = DrawPanel(Board(GRID, HashSet()))
@@ -98,14 +105,14 @@ fun main() {
     })
     buttons["Snapshot"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) = Thread {
-            val file = createFile("Snapshot", "png")
+            val file = createFile("${SNAPSHOTS_DIR}Snapshot", "png")
             snapshot(panel.board, file)
         }.start();
     })
     buttons["Save"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) {
             if (panel.board.coordinates.isNotEmpty()) {
-                createFile("GameOfLife", "golf").writeText("$GRID\n${panel.board}")
+                createFile("${SAVED_DIR}GameOfLife", "golf").writeText("$GRID\n${panel.board}")
             }
         }
     })
@@ -115,7 +122,7 @@ fun main() {
                 buttons["Record"]?.icon = icons["Record"]
             } else {
                 buttons["Record"]?.icon = icons["Recording"]
-                val file = createFile("Recording", "golfr")
+                val file = createFile("${RECORDINGS_DIR}Recording", "golfr")
                 file.appendText("$GRID\n")
                 RECORDING_FILE = file.name
             }
@@ -126,7 +133,7 @@ fun main() {
         override fun actionPerformed(e: ActionEvent?) {
             val fileFrame = JFrame("Load Game of Life Board")
             val filePanel = JPanel(GridLayout(-1, 1))
-            val currentDir = File(".").listFiles().filter { it.name.endsWith(".golf") }
+            val currentDir = File(SAVED_DIR).listFiles().filter { it.name.endsWith(".golf") }
             for (file in currentDir) {
                 val fileButton = JButton(file.name, icons["File"])
                 fileButton.addActionListener {
@@ -138,9 +145,17 @@ fun main() {
                     } else {
                         assertGrid(data.first)
                         GRID = data.first
+                        // Adjust zoom based on board size
+                        panel.preferredSize = dimension()
+                        frame.remove(scrollFrame)
+                        scrollFrame = JScrollPane(panel)
+                        scrollFrame.verticalScrollBar.unitIncrement = 16
+                        scrollFrame.horizontalScrollBar.unitIncrement = 16
+                        frame.add(scrollFrame)
+                        // Fill in board
                         panel.board = Board(data.first, data.second)
                         gameIterator = panel.board.iterator()
-                        frame.repaint()
+                        frame.revalidate()
                     }
                 }
                 fileButton.isContentAreaFilled = false;
@@ -169,7 +184,6 @@ fun main() {
             scrollFrame.horizontalScrollBar.unitIncrement = 16
             frame.add(scrollFrame)
             frame.revalidate()
-            frame.repaint()
         }
     })
     buttons["Zoom Out"]?.addActionListener(object : AbstractAction() {
@@ -186,7 +200,6 @@ fun main() {
                 scrollFrame.horizontalScrollBar.unitIncrement = 16
                 frame.add(scrollFrame)
                 frame.revalidate()
-                frame.repaint()
             }
         }
     })
@@ -316,4 +329,8 @@ fun assertGrid(grid: Int) {
     // be a GRID x GRID square.
     if (grid !in 100 until sqrt(Integer.MAX_VALUE.toDouble()).toInt())
         throw IllegalArgumentException("GRID must be between 100 and 65500")
+}
+
+fun setPanelSize() {
+
 }
