@@ -20,34 +20,66 @@ The simulator comes with the following features:
 
 Icon | Key | Description
 --- | --- | ---
-<img src="src/Icons/next.png" alt="Next Icon" width=50px /> | `RIGHT ARROW` | Moves the simulation to the next generation according to the rules above.
+<img src="src/Icons/next.png" alt="Next Icon" width=50px /> | `RIGHT ARROW` | Moves the simulation to the next generation.
 <img src="src/Icons/reset.png" alt="Reset Icon" width=50px /> | `BACKSPACE` | Clears the simulation board.
 <img src="src/Icons/random.png" alt="Random Icon" width=50px /> | `D` | Randomly fills the simulation board.
 <img src="src/Icons/save.png" alt="Save Icon" width=50px /> | `S` | Saves the current state of the board as a `.golf` file.
 <img src="src/Icons/snapshot.png" alt="Snapshot Icon" width=50px /> | `C` | Saves the current state of the board as a `.png` file.
 <img src="src/Icons/recordrecording.gif" alt="Recording Icon" width=50px /> | `R` | Toggles Recording Mode. If recording mode is on, any changes made to the board by clicking **NEXT** or **START/STOP** are recorded and saved into a `.gif` file.
 <img src="src/Icons/search.png" alt="Search Files Icon" width=50px /> | `F` | Opens all `.golf` files and allows the user to load in a new simulation state.
-<img src="src/Icons/plus.png" alt="Zoom In Files Icon" width=50px /> | `F` | Zooms in on the simulation board.
-<img src="src/Icons/minus.png" alt="Zoom Out Files Icon" width=50px /> | `F` | Zooms out on the simulation board.
+<img src="src/Icons/plus.png" alt="Zoom In Files Icon" width=50px /> | `=` | Zooms in on the simulation board.
+<img src="src/Icons/minus.png" alt="Zoom Out Files Icon" width=50px /> | `-` | Zooms out on the simulation board.
 
 ## `golf` File Format and Loading Files
 
 When the user presses the `Save` button, the current state of the board will be saved in a `golf` (`G`ame `O`f `L`ife `F`ile) file with the following format:
 
 ```
-SIZE:index1,index2,index3,...
+SIZE
+index1
+index2
+index3
+...
 ```
 
-where `SIZE` is the size of the board (the board is always a `SIZE` by `SIZE` square) and `index1,index2,index3,...` represent the indices where cells are alive. The indices are "flattened". Given an `x` coordinate and a `y` coordinate on a board with size `size`, the formula to calculate the coordinate is `coordinate = x * size + y`. If you'd like to create your own designs and load them into the simulator, simply create a file in the format above, where you specify the size of your square board and the coordinates of every square you'd like to be on.
+where `SIZE` is the size of the board (the board is always a `SIZE` by `SIZE` square) and `index1`, `index2`, `index3`, ... represent the indices where cells are alive. The indices are flattened. Given an `x` coordinate and a `y` coordinate on a board with size `size`, the formula to calculate the coordinate is `coordinate = x * size + y`. If you'd like to create your own designs and load them into the simulator, simply create a file in the format above, where you specify the size of your square board and the coordinates of every square you'd like to be alive.
+
+## `golfr` File Format
+
+The `.golfr` file format is the s file format used to store multiple frames of simulation. The file format is the same as the `.golf` format, without the `SIZE` parameter at the front. The `SIZE` is specified on the first line of this file. It simply stores the coordinates of each cell as a comma separated list on every line in the file.
 
 ## Recording and `convert.py`
 
-Once the user presses the `Record` button, a file called `Recording{X}.txt` (`X` is a number) is created. This file will contain the state of the board for every frame that was recorded. To convert this file to a video format, use `convert.py`.
+Once the user presses the `Record` button, a file called `Recording{X}.golfr` (`X` is a number) is created. This file will contain the state of the board for every frame that was recorded. To convert this file to a video format, use `convert.py`.
+
+`convert.py` usage:
+
+```
+usage: convert.py [-h] [-f FILENAME] [-t TYPE] [-r RESOLUTION] [-fps FPS]
+
+Convert recorded .golfr files into video.
+
+optional arguments:
+  -h, --help                                show this help message and exit
+  -f FILENAME, --filename FILENAME          The filename of the .golf file to convert.
+  -t TYPE, --filetype TYPE                  The file type of video to convert to.
+  -r RESOLUTION, --resolution RESOLUTION    The size of the cells in the video.
+  -fps FPS, --fps FPS                       The frames per second of the video.
+```
+
+`convert.py` dependencies:
+
+* `Python 3.7+`
+* `numpy`
+* `imageio`
+* `tqdm`
+
+Note that `convert.py` is just one way of converting the data into video form. Modify the script to customize the video you get out of it.
 
 ## Gallery
 
-<img src="Documentation/Snapshot.png" alt="Example Snapshot" width=50% />
+<img src="Documentation/snapshot.png" alt="Example Snapshot" width=50% />
 <br />
 
-<img src="Documentation/Recording.gif" alt="Recording GIF" width=50% />
+<img src="Documentation/recording.gif" alt="Recording GIF" width=50% />
 <br />

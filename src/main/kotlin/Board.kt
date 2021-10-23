@@ -133,5 +133,5 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
     /**
      * Returns the board as the coordinates of the cells that are "true".
      */
-    override fun toString(): String = coordinates.joinToString(separator = ",")
+    override fun toString(): String = coordinates.joinToString(separator = "\n")
 }

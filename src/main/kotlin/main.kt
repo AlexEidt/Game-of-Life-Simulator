@@ -2,27 +2,24 @@
 // Copyright 2021 by Alex Eidt
 
 import java.awt.*
-import java.awt.event.*
+import java.awt.event.ActionEvent
+import java.awt.event.KeyEvent
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.io.File
-import java.io.FileNotFoundException
 import java.nio.file.Paths
 import java.util.*
 import javax.swing.*
+import kotlin.collections.HashSet
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
-var GRID = 400 // Length of one side of Game of Life Grid.
+var GRID = 200 // Length of one side of Game of Life Grid.
+var RECORDING_FILE = "" // Recording file name
 var IS_RECORDING = false
-const val KEEP_RECORDING = true
 
 fun main() {
-    // GRID must be a multiple of 100
-    if (GRID % 100 != 0)
-        throw IllegalArgumentException("GRID must be divisible by 100")
-    // GRID must be between 100 and sqrt(2^31-1) since the simulation board will always
-    // be a GRID x GRID square.
-    if (GRID !in 100 until sqrt(Integer.MAX_VALUE.toDouble()).toInt())
-        throw IllegalArgumentException("GRID must be between 100 and 65500")
+    assertGrid(GRID)
 
     val frame = JFrame("Conway's Game of Life")
     var panel = DrawPanel(Board(GRID, HashSet()))
@@ -37,33 +34,25 @@ fun main() {
     frame.add(scrollFrame)
 
     var gameIterator = panel.board.iterator()
-    // Icons
-    val iconFolder = joinPath("src", "Icons")
-    val icons = mapOf(
-        "File" to sizeIcon(ImageIcon("${iconFolder}file.png")),
-        "Next" to sizeIcon(ImageIcon("${iconFolder}next.png")),
-        "Reset" to sizeIcon(ImageIcon("${iconFolder}reset.png")),
-        "Random" to sizeIcon(ImageIcon("${iconFolder}random.png")),
-        "Search" to sizeIcon(ImageIcon("${iconFolder}search.png")),
-        "Record" to sizeIcon(ImageIcon("${iconFolder}record.png")),
-        "Recording" to sizeIcon(ImageIcon("${iconFolder}recording.png")),
-        "Snapshot" to sizeIcon(ImageIcon("${iconFolder}snapshot.png")),
-        "Save" to sizeIcon(ImageIcon("${iconFolder}save.png")),
-        "Zoom In" to sizeIcon(ImageIcon("${iconFolder}plus.png")),
-        "Zoom Out" to sizeIcon(ImageIcon("${iconFolder}minus.png"))
+    // Map Icon Names to Icon Objects
+    val icons = File(joinPath("src", "Icons")).listFiles().map { it.path }.associateBy(
+        // Get Icon Name from file path
+        { it.substring(it.lastIndexOf(File.separator) + 1, it.lastIndexOf(".")) },
+        { sizeIcon(ImageIcon(it)) }
+    )
+    val buttonKeys = mapOf(
+        "Next" to "→",
+        "Reset" to "←",
+        "Random" to "D",
+        "Save" to "S",
+        "Snapshot" to "C",
+        "Record" to "R",
+        "Open" to "F",
+        "Zoom In" to "+",
+        "Zoom Out" to "-"
     )
     // Buttons
-    val buttons = mapOf(
-        "Next" to JButton("Next [→]", icons["Next"]),
-        "Reset" to JButton("Reset [←]", icons["Reset"]),
-        "Random" to JButton("Random [D]", icons["Random"]),
-        "Save" to JButton("Save [Shift+S]", icons["Save"]),
-        "Snapshot" to JButton("Snapshot [C]", icons["Snapshot"]),
-        "Record" to JButton("Record [R]", icons["Record"]),
-        "Search" to JButton("Open [F]", icons["Search"]),
-        "Zoom In" to JButton("Zoom In [+]", icons["Zoom In"]),
-        "Zoom Out" to JButton("Zoom Out [-]", icons["Zoom Out"])
-    )
+    val buttons = buttonKeys.keys.associateBy({ it }, { JButton("$it [${buttonKeys[it]}]", icons[it]) })
     // Key Bindings
     val keyBindings = mapOf(
         "Next" to KeyEvent.VK_RIGHT,
@@ -72,7 +61,7 @@ fun main() {
         "Save" to KeyEvent.VK_S,
         "Snapshot" to KeyEvent.VK_C,
         "Record" to KeyEvent.VK_R,
-        "Search" to KeyEvent.VK_F,
+        "Open" to KeyEvent.VK_F,
         "Zoom In" to KeyEvent.VK_EQUALS,
         "Zoom Out" to KeyEvent.VK_MINUS
     )
@@ -90,7 +79,7 @@ fun main() {
                 gameIterator.next()
                 frame.repaint()
                 if (IS_RECORDING) {
-                    File("__recording__.golf").appendText("${panel.board}\n")
+                    File(RECORDING_FILE).appendText("${panel.board}\n")
                 }
             }
         }
@@ -115,39 +104,44 @@ fun main() {
     })
     buttons["Save"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) {
-            createFile("GameOfLife", "golf").writeText("$GRID:${panel.board}")
+            if (panel.board.coordinates.isNotEmpty()) {
+                createFile("GameOfLife", "golf").writeText("$GRID\n${panel.board}")
+            }
         }
     })
     buttons["Record"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) {
             if (IS_RECORDING) {
                 buttons["Record"]?.icon = icons["Record"]
-                val dir = File(".").listFiles().map {
-                    
-                }
-                if (File("__recording__.golf").length() != 0L) {
-                }
             } else {
                 buttons["Record"]?.icon = icons["Recording"]
-                createFile("Recording", "txt")
+                val file = createFile("Recording", "golfr")
+                file.appendText("$GRID\n")
+                RECORDING_FILE = file.name
             }
             IS_RECORDING = !IS_RECORDING
         }
     })
-    buttons["Search"]?.addActionListener(object : AbstractAction() {
+    buttons["Open"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) {
             val fileFrame = JFrame("Load Game of Life Board")
             val filePanel = JPanel(GridLayout(-1, 1))
-            for (file in getFiles()) {
+            val currentDir = File(".").listFiles().filter { it.name.endsWith(".golf") }
+            for (file in currentDir) {
                 val fileButton = JButton(file.name, icons["File"])
                 fileButton.addActionListener {
-                    val boardString = file.readLines()[0].split(":")
-                    val size = boardString[0].toInt()
-                    val onSet = boardString[1].split(",").map { it.toInt() }.toHashSet()
-                    GRID = size
-                    panel.board = Board(size, onSet)
-                    gameIterator = panel.board.iterator()
-                    frame.repaint()
+                    val data = getData(file)
+                    // data.first contains the size of the board. If it is 0, an error was detected.
+                    if (data.first == 0) {
+                        fileButton.icon = icons["Error"]
+                        fileButton.isEnabled = false
+                    } else {
+                        assertGrid(data.first)
+                        GRID = data.first
+                        panel.board = Board(data.first, data.second)
+                        gameIterator = panel.board.iterator()
+                        frame.repaint()
+                    }
                 }
                 fileButton.isContentAreaFilled = false;
                 filePanel.add(fileButton)
@@ -239,46 +233,25 @@ fun sizeIcon(icon: ImageIcon): ImageIcon {
 }
 
 /**
- * Finds all valid .golf (Game of Life Files) in the src directory. If a .golf file
- * is corrupted, it is not included in the returned list.
+ * Gets the board state from a ".golf" file.
  *
- * @return A list of Files representing valid .golf files in the src directory.
- * @throws FileNotFoundException
+ * @param file  The ".golf" file to read.
+ * @return      Pair with size of board and set of coordinates representing cell locations.
  */
-fun getFiles(): List<File> {
-    val pattern = Regex("[0-9]+:([0-9]+,?)+")
-    val dir = File(".").listFiles()
-    return dir.filter { it.name.endsWith(".golf") }.filter { !hasError(it, pattern) }
-}
-
-/**
- * Determines if a .golf file is corrupted.
- *
- * @param file  the file to check.
- * @param regex the regex to check the contents of the given file.
- * @return      true if file is corrupted, false otherwise.
- */
-fun hasError(file: File, pattern: Regex): Boolean {
-    val fileReader = Scanner(file)
-    // Check if file is empty.
-    if (fileReader.hasNextLine()) {
-        val line = fileReader.nextLine()
-        // .golf file format is: "SIZE:index1,index2,index3,..."
-        val data = line.split(":")
-        val size = data[0].toInt() * data[0].toInt()
-        // If file is not empty, check if the file contents match the regex exactly.
-        var notValid = pattern.replace(line, "").isNotBlank() && !line.endsWith(",")
-        // If the file contents match the regex exactly, check if every integer is in the given range
-        // of 0 <= (integer) < size.
-        if (!notValid) {
-            notValid = !notValid && data[1].split(",").map {
-                // If the given number is too big to fit in an int, detect this.
-                try { it.toInt() } catch (e: Exception) { -1 }
-            }.any { it >= size || it < 0 }
+fun getData(file: File): Pair<Int, HashSet<Int>> {
+    val scanner = Scanner(file)
+    var size = 0
+    val set: HashSet<Int> = HashSet()
+    if (scanner.hasNextLine()) {
+        val gridSize = scanner.nextLine().toIntOrNull()
+        if (gridSize != null) {
+            size = gridSize
+            while (scanner.hasNextLine()) {
+                scanner.nextLine().toIntOrNull()?.let { set.add(it) }
+            }
         }
-        return notValid
     }
-    return false;
+    return Pair(size, set)
 }
 
 /**
@@ -319,7 +292,7 @@ fun dimension(): Dimension {
 /**
  * Creates a file with the given "filename" and "extension".
  * If a file with "filename" already exists, the name will be changed
- * to "filename{x}" where x is a number.
+ * to "filename{x}.extension" where x is a number.
  */
 fun createFile(filename: String, extension: String): File {
     var file = File("${filename}.${extension}")
@@ -328,4 +301,19 @@ fun createFile(filename: String, extension: String): File {
         file = File("${filename}${index++}.${extension}")
     }
     return file
+}
+
+/**
+ * Asserts that the given value for "GRID" is valid.
+ *
+ * @param grid  The grid value to test.
+ */
+fun assertGrid(grid: Int) {
+    // GRID must be a multiple of 100
+    if (grid % 100 != 0)
+        throw IllegalArgumentException("GRID must be divisible by 100")
+    // GRID must be between 100 and sqrt(2^31-1) since the simulation board will always
+    // be a GRID x GRID square.
+    if (grid !in 100 until sqrt(Integer.MAX_VALUE.toDouble()).toInt())
+        throw IllegalArgumentException("GRID must be between 100 and 65500")
 }
