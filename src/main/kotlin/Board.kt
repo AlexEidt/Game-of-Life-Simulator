@@ -21,10 +21,9 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
     fun random() {
         coordinates.clear()
         // Get a random density between 0 and 1
-        val density = (0..1000).shuffled()[0] / 1000.0
+        val density = (0..1000).random() / 1000.0
         // Get a set of random numbers between 0 and size * size
-        val random = (0 until size * size).shuffled().take((size * size * density).toInt())
-        coordinates.addAll(random)
+        coordinates.addAll((0 until size * size).shuffled().take((size * size * density).toInt()))
     }
 
     // Adds a new square to the DrawPanel.
