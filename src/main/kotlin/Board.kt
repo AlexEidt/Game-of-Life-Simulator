@@ -9,9 +9,7 @@
  * @param size the size of the board. Board will always be a size x size square.
  * @param coordinates the cells of the board that are true.
  */
-class Board(val size: Int, val coordinates: MutableSet<Int>) {
-    private val board: BitMap = BitMap(coordinates, size, size)
-    private val remove: MutableSet<Int> = mutableSetOf()
+class Board(val size: Int, val coordinates: HashSet<Int>) {
     private val visited: HashSet<Int> = HashSet()
     private val set: MutableSet<Int> = mutableSetOf()
 
@@ -38,8 +36,6 @@ class Board(val size: Int, val coordinates: MutableSet<Int>) {
     // Clears the board.
     fun clear() {
         coordinates.clear()
-        board.clear()
-        remove.clear()
         visited.clear()
     }
 
@@ -54,20 +50,11 @@ class Board(val size: Int, val coordinates: MutableSet<Int>) {
             override fun hasNext(): Boolean = coordinates.isNotEmpty()
 
             override fun next(): Int {
-                for (position in coordinates) {
-                    board[position] = true
-                }
-                for (position in remove) {
-                    board[position] = false
-                }
-                remove.clear()
                 visited.clear()
                 set.clear()
                 for (position in coordinates) {
-                    if (checkNeighbors(neighbors1, position)) {
+                    if (checkCurrent(neighbors1, position)) {
                         set.add(position)
-                    } else {
-                        remove.add(position)
                     }
                     visited.add(position)
                     getNeighbors(neighbors2, position)
@@ -75,8 +62,6 @@ class Board(val size: Int, val coordinates: MutableSet<Int>) {
                         if (neighbor >= 0 && neighbor !in visited) {
                             if (checkNeighbors(neighbors3, neighbor)) {
                                 set.add(neighbor)
-                            } else {
-                                remove.add(neighbor)
                             }
                             visited.add(neighbor)
                         }
@@ -97,13 +82,13 @@ class Board(val size: Int, val coordinates: MutableSet<Int>) {
      * are false if the neighbor is out of bounds.
      */
     private fun getNeighbors(neighbors: Array<Int>, position: Int) {
-        val isTop: Boolean = position / size == 0
-        val isBottom: Boolean = position / size == size - 1
-        val isLeft: Boolean = position % size == 0
-        val isRight: Boolean = (position + 1) % size == 0
+        val isTop = position / size == 0
+        val isBottom = position / size == size - 1
+        val isLeft = position % size == 0
+        val isRight = (position + 1) % size == 0
 
-        val rowNext: Int = position + size
-        val rowPrev: Int = position - size
+        val rowNext = position + size
+        val rowPrev = position - size
 
         neighbors[0] = (position + 1) * toInt(isRight) // Right
         neighbors[1] = if (position == 0 || isLeft) -1 else position - 1 // Left
@@ -122,13 +107,27 @@ class Board(val size: Int, val coordinates: MutableSet<Int>) {
      */
     private fun checkNeighbors(neighbors: Array<Int>, position: Int): Boolean {
         getNeighbors(neighbors, position)
-        val valid = neighbors.count { it >= 0 && board[it] }
-        val self: Boolean = board[position]
+        val valid = neighbors.count { it >= 0 && it in coordinates }
+        val self: Boolean = position in coordinates
         // Any true cell with fewer than two true neighbors becomes false.
         // Any true cell with 2 or 3 true neighbors remains true.
         // Any true cell with more than 3 true neighbors becomes false.
         // Any false cell with exactly 3 neighbors becomes true.
         return (self && (valid == 2 || valid == 3)) || (!self && valid == 3)
+    }
+
+    /**
+     * Optimized version of "checkNeighbors" for when the current positions
+     * are looked over since we know all of these positions are "true".
+     */
+    private fun checkCurrent(neighbors: Array<Int>, position: Int): Boolean {
+        getNeighbors(neighbors, position)
+        val valid = neighbors.count { it >= 0 && it in coordinates }
+        // Any true cell with fewer than two true neighbors becomes false.
+        // Any true cell with 2 or 3 true neighbors remains true.
+        // Any true cell with more than 3 true neighbors becomes false.
+        // Any false cell with exactly 3 neighbors becomes true.
+        return valid == 2 || valid == 3
     }
 
     /**

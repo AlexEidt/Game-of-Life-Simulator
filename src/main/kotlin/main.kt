@@ -9,17 +9,23 @@ import java.nio.file.Paths
 import java.util.*
 import javax.swing.*
 import kotlin.math.ceil
+import kotlin.math.sqrt
 
-var GRID = 20000 // Length of one side of Game of Life Grid.
+var GRID = 400 // Length of one side of Game of Life Grid.
 var IS_RECORDING = false
 const val KEEP_RECORDING = true
 
 fun main() {
-    if (GRID % 100 != 0) throw IllegalArgumentException("GRID must be divisible by 100")
-    if (GRID !in 100 until 65500) throw IllegalArgumentException("GRID must be between 100 and 65500")
+    // GRID must be a multiple of 100
+    if (GRID % 100 != 0)
+        throw IllegalArgumentException("GRID must be divisible by 100")
+    // GRID must be between 100 and sqrt(2^31-1) since the simulation board will always
+    // be a GRID x GRID square.
+    if (GRID !in 100 until sqrt(Integer.MAX_VALUE.toDouble()).toInt())
+        throw IllegalArgumentException("GRID must be between 100 and 65500")
 
     val frame = JFrame("Conway's Game of Life")
-    var panel = DrawPanel(Board(GRID, mutableSetOf()))
+    var panel = DrawPanel(Board(GRID, HashSet()))
 
     // Set Simulation Playground to be Scrollable.
     panel.isOpaque = true
@@ -102,28 +108,28 @@ fun main() {
         }
     })
     buttons["Snapshot"]?.addActionListener(object : AbstractAction() {
-        override fun actionPerformed(e: ActionEvent?) = Thread { snapshot(panel.board) }.start();
+        override fun actionPerformed(e: ActionEvent?) = Thread {
+            val file = createFile("Snapshot", "png")
+            snapshot(panel.board, file)
+        }.start();
     })
     buttons["Save"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) {
-            var file = File("GameOfLife.golf")
-            var index = 1
-            while (file.exists()) {
-                file = File("GameOfLife${index++}.golf")
-            }
-            file.writeText("$GRID:${panel.board}")
+            createFile("GameOfLife", "golf").writeText("$GRID:${panel.board}")
         }
     })
     buttons["Record"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) {
             if (IS_RECORDING) {
                 buttons["Record"]?.icon = icons["Record"]
+                val dir = File(".").listFiles().map {
+                    
+                }
                 if (File("__recording__.golf").length() != 0L) {
-                    Thread { convertToGIF(frame, GRID, KEEP_RECORDING) }.start()
                 }
             } else {
                 buttons["Record"]?.icon = icons["Recording"]
-                File("__recording__.golf") // Create recording file.
+                createFile("Recording", "txt")
             }
             IS_RECORDING = !IS_RECORDING
         }
@@ -137,7 +143,7 @@ fun main() {
                 fileButton.addActionListener {
                     val boardString = file.readLines()[0].split(":")
                     val size = boardString[0].toInt()
-                    val onSet = boardString[1].split(",").map { it.toInt() }.toMutableSet()
+                    val onSet = boardString[1].split(",").map { it.toInt() }.toHashSet()
                     GRID = size
                     panel.board = Board(size, onSet)
                     gameIterator = panel.board.iterator()
@@ -308,4 +314,18 @@ fun dimension(): Dimension {
     // Round "original" to nearest multiple of GRID for zooming.
     val size = ceil(original / GRID).toInt() * GRID
     return Dimension(size, size)
+}
+
+/**
+ * Creates a file with the given "filename" and "extension".
+ * If a file with "filename" already exists, the name will be changed
+ * to "filename{x}" where x is a number.
+ */
+fun createFile(filename: String, extension: String): File {
+    var file = File("${filename}.${extension}")
+    var index = 1
+    while (file.exists()) {
+        file = File("${filename}${index++}.${extension}")
+    }
+    return file
 }
