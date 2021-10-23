@@ -23,7 +23,7 @@ const val LOOP_CONTINUOUSLY = true
  * @throws IOException
  */
 @Throws(IOException::class)
-fun snapshot(writer: GifSequenceWriter, board: Set<Int>, size: Int) {
+fun snapshot(writer: GifSequenceWriter, board: List<Int>, size: Int) {
     val scale = RESOLUTION
     val gridScaled = size * scale
     val bufferedImage = BufferedImage(gridScaled, gridScaled, BufferedImage.TYPE_INT_ARGB)
@@ -65,10 +65,11 @@ fun snapshot(board: Board) {
  *
  * @param frame JFrame to update to show progress.
  * @param size the size of the board. Always a size x size square.
+ * @param keepRecording if true, keep the "__recording__.golf" file. Otherwise, delete it.
  * @throws IOException
  */
 @Throws(IOException::class)
-fun convertToGIF(frame: JFrame, size: Int) {
+fun convertToGIF(frame: JFrame, size: Int, keepRecording: Boolean) {
     val recording = File("__recording__.golf")
     val file = Scanner(recording)
     // Create output gif file.
@@ -80,16 +81,14 @@ fun convertToGIF(frame: JFrame, size: Int) {
     val output: ImageOutputStream = FileImageOutputStream(recorded)
     // Create gif using frames.
     val writer = GifSequenceWriter(output, BufferedImage.TYPE_INT_ARGB, GIF_SPEED, LOOP_CONTINUOUSLY)
-    val board: MutableSet<Int> = mutableSetOf()
     frame.title = "Converting to GIF..."
     while (file.hasNextLine()) {
-        board.addAll(file.nextLine().split(",").map { it.toInt() })
-        snapshot(writer, board, size)
-        board.clear()
+        snapshot(writer, file.nextLine().split(",").map { it.toInt() }, size)
     }
-    frame.title = "Conways Game of Life"
+    frame.title = "Conway's Game of Life"
     file.close()
-    recording.delete()
     writer.close()
     output.close()
+
+    if (!keepRecording) recording.delete()
 }

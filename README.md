@@ -22,24 +22,22 @@ Icon | Key | Description
 --- | --- | ---
 <img src="src/Icons/next.png" alt="Next Icon" /> | `RIGHT ARROW` | Moves the simulation to the next generation according to the rules above.
 <img src="src/Icons/reset.png" alt="Reset Icon" /> | `BACKSPACE` | Clears the simulation board.
-<img src="src/Icons/startstop.gif" alt="Start/Stop Icon" /> | `SPACE` | Starts/Stops the simulation.
-<img src="src/Icons/eraser.png" alt="Eraser Icon" /> | `E` | Toggles Eraser Mode to be on. Allows user to erase squares on the simulation board.
-<img src="src/Icons/draw.png" alt="Draw Icon" /> | `D` | Toggles Draw Mode to be on. Allows user to draw on the simulation board.
 <img src="src/Icons/save.png" alt="Save Icon" /> | `SHIFT+S` | Saves the current state of the board as a `.golf` file.
 <img src="src/Icons/snapshot.png" alt="Snapshot Icon" /> | `C` | Saves the current state of the board as a `.png` file.
 <img src="src/Icons/recordrecording.gif" alt="Recording Icon" /> | `R` | Toggles Recording Mode. If recording mode is on, any changes made to the board by clicking **NEXT** or **START/STOP** are recorded and saved into a `.gif` file.
 <img src="src/Icons/search.png" alt="Search Files Icon" /> | `F` | Opens all `.golf` files and allows the user to load in a new simulation state.
-<img src="src/Icons/keyboard.png" alt="Keyboard Icon" /> | `K` | Shows a window containing all Key Bindings for the program.
 <img src="src/Icons/file.png" alt="File Icon" /> | | When the **OPEN** button is pressed, this icon appears next to all valid `.golf` files.
-<img src="src/Icons/error.png" alt="Error Icon" /> | | If a `.golf` file is corrupted, the error icon will appear next to it when the **OPEN** button is clicked and all `.golf` files are listed.
-<img src="src/Icons/speedometer.gif" alt="Speedometer Icon" /> | | Shows the current speed the simulation.
 
 ## `.golf` Files
 
 The `.golf` file format is shown below. It stands for **g**ame **o**f **l**ife **f**ile. The first number is the size of one side of the simulation board. It is followed by a `:`. The series of numbers that come after this represents the coordinates on the board that are `true`. If any of the numbers in this list are greater than or equal to the size squared or negative, the file is marked as corrupted. If the file contains any characters other than the numbers `0-9`, commas (`,`) or colons (`:`) the file is marked as corrupted.
 
 ```
-50:1689,1639,1589,1439,1389,1288,1238,1138,1137,1087,1037,987,936,886,836,785,734,683,633,632,582,580,529,528,477,476,475,524,523,522,571,620,670,720,770,769,819,869,920,970,1020,1070,1071,1121,1171,1172,1222,1223,1325,1326,1327,1328,1329,1330,1282,1283,1233,1234,1184,1185,1136,988,939,889,839,789,740,690,640,590,540,490,491,492,542,543,593,643,693,744,794,844,894,943,993,1043,1093,1193,1243,1293,1342,1442,1492,1491,1541,1591,1641,1640,1690,1739,1788,1787,1786,1785,1784,1783,1732,1731,1680,1679,1678,1627,1626,1625,1624
+SIZE:index1,index2,index3,...
+
+// Example:
+
+50:1689,1639,1589,1439,1389,...
 ```
 
 Given an `x` coordinate and a `y` coordinate on a board with size `size`, the formula to calculate the coordinates shown in the list above is `coordinate = x * size + y`. If you'd like to create your own designs and load them into the simulator, simply create a file in the format above, where you specify the size of your square board and the coordinates of every square you'd like to be on.
@@ -77,10 +75,6 @@ The structure of the `src` directory is shown below.
 <br />
 
 NOTE: The directory structure graphic above was made with the [Directory Grapher Tool](https://github.com/AlexEidt/Directory-Grapher).
-
-# Running the Program
-
-Create a new Kotlin Project in an IDE ([IntelliJ](https://www.jetbrains.com/idea/download/#section=windows) is recommended) and copy in the `src` folder. Note that there is an `Icons` folder in the `src` folder where the program stores all the icons. It's important that the structure of the `src` directory remains as is or else Icons will not appear in the app.
 
 # Acknowledgements
 

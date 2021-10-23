@@ -12,21 +12,35 @@
 class Board(val size: Int, val coordinates: MutableSet<Int>) {
     private val board: BitMap = BitMap(coordinates, size, size)
     private val remove: MutableSet<Int> = mutableSetOf()
-    private val visited: MutableSet<Int> = mutableSetOf()
+    private val visited: HashSet<Int> = HashSet()
     private val set: MutableSet<Int> = mutableSetOf()
 
+    private val neighbors1: Array<Int> = Array(8) { 0 }
+    private val neighbors2: Array<Int> = Array(8) { 0 }
+    private val neighbors3: Array<Int> = Array(8) { 0 }
+
+    // Randomly fills in the board.
+    fun random() {
+        coordinates.clear()
+        // Get a random density between 0 and 1
+        val density = (0..1000).shuffled()[0] / 1000.0
+        // Get a set of random numbers between 0 and size * size
+        val random = (0 until size * size).shuffled().take((size * size * density).toInt())
+        coordinates.addAll(random)
+    }
+
     // Adds a new square to the DrawPanel.
-    fun addValue(value: Int) = this.coordinates.add(value)
+    fun addValue(value: Int) = coordinates.add(value)
 
     // Removes a square from the DrawPanel.
-    fun removeValue(value: Int) = this.coordinates.remove(value)
+    fun removeValue(value: Int) = coordinates.remove(value)
 
     // Clears the board.
     fun clear() {
-        this.coordinates.clear();
-        this.board.clear()
-        this.remove.clear()
-        this.visited.clear()
+        coordinates.clear()
+        board.clear()
+        remove.clear()
+        visited.clear()
     }
 
     /**
@@ -40,21 +54,26 @@ class Board(val size: Int, val coordinates: MutableSet<Int>) {
             override fun hasNext(): Boolean = coordinates.isNotEmpty()
 
             override fun next(): Int {
-                for (position in coordinates)   board[position] = true
-                for (position in remove)        board[position] = false
+                for (position in coordinates) {
+                    board[position] = true
+                }
+                for (position in remove) {
+                    board[position] = false
+                }
                 remove.clear()
                 visited.clear()
                 set.clear()
                 for (position in coordinates) {
-                    if (checkNeighbors(position)) {
+                    if (checkNeighbors(neighbors1, position)) {
                         set.add(position)
                     } else {
                         remove.add(position)
                     }
                     visited.add(position)
-                    for (neighbor in getNeighbors(position)) {
+                    getNeighbors(neighbors2, position)
+                    for (neighbor in neighbors2) {
                         if (neighbor >= 0 && neighbor !in visited) {
-                            if (checkNeighbors(neighbor)) {
+                            if (checkNeighbors(neighbors3, neighbor)) {
                                 set.add(neighbor)
                             } else {
                                 remove.add(neighbor)
@@ -70,32 +89,30 @@ class Board(val size: Int, val coordinates: MutableSet<Int>) {
         }
     }
 
-    private inline fun toInt(bool: Boolean) = if (bool) -1 else 1
+    private fun toInt(bool: Boolean) = if (bool) -1 else 1
 
     /**
      * Given a certain position on the board, returns the coordinates of all
      * neighbors. Positions on the boundaries of the board feature neighbors that
      * are false if the neighbor is out of bounds.
      */
-    private inline fun getNeighbors(position: Int): Array<Int> {
-        val isTop: Boolean = position / this.size == 0
-        val isBottom: Boolean = position / this.size == this.size - 1
-        val isLeft: Boolean = position % this.size == 0
-        val isRight: Boolean = (position + 1) % this.size == 0
+    private fun getNeighbors(neighbors: Array<Int>, position: Int) {
+        val isTop: Boolean = position / size == 0
+        val isBottom: Boolean = position / size == size - 1
+        val isLeft: Boolean = position % size == 0
+        val isRight: Boolean = (position + 1) % size == 0
 
-        val rowNext: Int = position + this.size
-        val rowPrev: Int = position - this.size
+        val rowNext: Int = position + size
+        val rowPrev: Int = position - size
 
-        return arrayOf(
-            (position + 1) * toInt(isRight), // Right
-            if (position == 0 || isLeft) -1 else position - 1, // Left
-            rowNext * toInt(isBottom), // Bottom
-            (rowNext + 1) * toInt(isRight || isBottom), // Downward Right Diagonal
-            (rowNext - 1) * toInt(isLeft || isBottom), // Downward Left Diagonal
-            rowPrev, // Top
-            if (rowPrev + 1 == 0 || isRight) -1 else rowPrev + 1, // Upward Right Diagonal
-            (rowPrev - 1) * toInt(isLeft || isTop), // Upward Left Diagonal
-        )
+        neighbors[0] = (position + 1) * toInt(isRight) // Right
+        neighbors[1] = if (position == 0 || isLeft) -1 else position - 1 // Left
+        neighbors[2] = rowNext * toInt(isBottom) // Bottom
+        neighbors[3] = (rowNext + 1) * toInt(isRight || isBottom) // Downward Right Diagonal
+        neighbors[4] = (rowNext - 1) * toInt(isLeft || isBottom) // Downward Left Diagonal
+        neighbors[5] = rowPrev // Top
+        neighbors[6] = if (rowPrev + 1 == 0 || isRight) -1 else rowPrev + 1 // Upward Right Diagonal
+        neighbors[7] = (rowPrev - 1) * toInt(isLeft || isTop) // Upward Left Diagonal
     }
 
     /**
@@ -103,14 +120,10 @@ class Board(val size: Int, val coordinates: MutableSet<Int>) {
      * will make it to the next generation given its neighbors and the rules specified
      * in this method.
      */
-    private inline fun checkNeighbors(position: Int): Boolean {
-        var valid = 0
-        for (neighbor in getNeighbors(position)) {
-            if (neighbor >= 0 && this.board[neighbor]) {
-                valid++
-            }
-        }
-        val self: Boolean = this.board[position]
+    private fun checkNeighbors(neighbors: Array<Int>, position: Int): Boolean {
+        getNeighbors(neighbors, position)
+        val valid = neighbors.count { it >= 0 && board[it] }
+        val self: Boolean = board[position]
         // Any true cell with fewer than two true neighbors becomes false.
         // Any true cell with 2 or 3 true neighbors remains true.
         // Any true cell with more than 3 true neighbors becomes false.
@@ -121,5 +134,5 @@ class Board(val size: Int, val coordinates: MutableSet<Int>) {
     /**
      * Returns the board as the coordinates of the cells that are "true".
      */
-    override fun toString(): String = this.coordinates.joinToString(separator = ",")
+    override fun toString(): String = coordinates.joinToString(separator = ",")
 }
