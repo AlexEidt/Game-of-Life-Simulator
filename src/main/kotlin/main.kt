@@ -23,7 +23,7 @@ var SAVED_DIR = joinPath("Saved")
 var IS_RECORDING = false
 
 fun main() {
-    assertGrid(GRID)
+    if (!assertGrid(GRID)) return
     File(RECORDINGS_DIR).mkdir()  // Directory for recording .golfr files
     File(SNAPSHOTS_DIR).mkdir()   // Directory for Snapshot .png files
     File(SAVED_DIR).mkdir()       // Directory for .golf files
@@ -143,7 +143,6 @@ fun main() {
                         fileButton.icon = icons["Error"]
                         fileButton.isEnabled = false
                     } else {
-                        assertGrid(data.first)
                         GRID = data.first
                         // Adjust zoom based on board size
                         panel.preferredSize = dimension()
@@ -256,7 +255,7 @@ fun getData(file: File): Pair<Int, HashSet<Int>> {
     val set: HashSet<Int> = HashSet()
     if (scanner.hasNextLine()) {
         val gridSize = scanner.nextLine().toIntOrNull()
-        if (gridSize != null) {
+        if (gridSize != null && assertGrid(gridSize)) {
             size = gridSize
             while (scanner.hasNextLine()) {
                 scanner.nextLine().toIntOrNull()?.let { set.add(it) }
@@ -319,17 +318,20 @@ fun createFile(filename: String, extension: String): File {
  * Asserts that the given value for "GRID" is valid.
  *
  * @param grid  The grid value to test.
+ * @return      true if "grid" is valid, otherwise false.
  */
-fun assertGrid(grid: Int) {
+fun assertGrid(grid: Int): Boolean {
     // GRID must be a multiple of 100
-    if (grid % 100 != 0)
-        throw IllegalArgumentException("GRID must be divisible by 100")
+    if (grid % 100 != 0) {
+        println("GRID must be divisible by 100")
+        return false
+    }
     // GRID must be between 100 and sqrt(2^31-1) since the simulation board will always
     // be a GRID x GRID square.
-    if (grid !in 100 until sqrt(Integer.MAX_VALUE.toDouble()).toInt())
-        throw IllegalArgumentException("GRID must be between 100 and 65500")
-}
-
-fun setPanelSize() {
-
+    val max = sqrt(Integer.MAX_VALUE.toDouble()).toInt()
+    if (grid !in 100 until max) {
+        println("GRID must be between 100 and $max")
+        return false
+    }
+    return true
 }

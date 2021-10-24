@@ -122,10 +122,6 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
     private fun checkCurrent(neighbors: Array<Int>, position: Int): Boolean {
         getNeighbors(neighbors, position)
         val valid = neighbors.count { it >= 0 && it in coordinates }
-        // Any true cell with fewer than two true neighbors becomes false.
-        // Any true cell with 2 or 3 true neighbors remains true.
-        // Any true cell with more than 3 true neighbors becomes false.
-        // Any false cell with exactly 3 neighbors becomes true.
         return valid == 2 || valid == 3
     }
 
