@@ -11,7 +11,7 @@
  */
 class Board(val size: Int, val coordinates: HashSet<Int>) {
     private val visited: HashSet<Int> = HashSet()
-    private val set: MutableSet<Int> = mutableSetOf()
+    private val next: MutableSet<Int> = mutableSetOf()
 
     private val neighbors1: Array<Int> = Array(8) { 0 }
     private val neighbors2: Array<Int> = Array(8) { 0 }
@@ -39,38 +39,32 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
     }
 
     /**
-     * To run the simulation, the Board class features an iterator which will calculate
+     * To run the simulation, the Board class features an "iterator" which will calculate
      * which cells make it to the next generation. Once all cells are false, the iterator
-     * stops.
+     * stops. The "iterator" is implemented in the "hasNext()" and "next()" functions below.
      */
-    fun iterator(): Iterator<Int> {
-        return object : Iterator<Int> {
+    fun hasNext(): Boolean = coordinates.isNotEmpty()
 
-            override fun hasNext(): Boolean = coordinates.isNotEmpty()
-
-            override fun next(): Int {
-                visited.clear()
-                set.clear()
-                for (position in coordinates) {
-                    if (checkCurrent(neighbors1, position)) {
-                        set.add(position)
+    fun next() {
+        visited.clear()
+        next.clear()
+        for (position in coordinates) {
+            if (checkCurrent(neighbors1, position)) {
+                next.add(position)
+            }
+            visited.add(position)
+            getNeighbors(neighbors2, position)
+            for (neighbor in neighbors2) {
+                if (neighbor >= 0 && neighbor !in visited) {
+                    if (checkNeighbors(neighbors3, neighbor)) {
+                        next.add(neighbor)
                     }
-                    visited.add(position)
-                    getNeighbors(neighbors2, position)
-                    for (neighbor in neighbors2) {
-                        if (neighbor >= 0 && neighbor !in visited) {
-                            if (checkNeighbors(neighbors3, neighbor)) {
-                                set.add(neighbor)
-                            }
-                            visited.add(neighbor)
-                        }
-                    }
+                    visited.add(neighbor)
                 }
-                coordinates.clear()
-                coordinates.addAll(set)
-                return 0 // Dummy return because iterator has to return something
             }
         }
+        coordinates.clear()
+        coordinates.addAll(next)
     }
 
     private fun toInt(bool: Boolean) = if (bool) -1 else 1
@@ -90,12 +84,12 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
         val rowPrev = position - size
 
         neighbors[0] = (position + 1) * toInt(isRight) // Right
-        neighbors[1] = if (position == 0 || isLeft) -1 else position - 1 // Left
+        neighbors[1] = if (isLeft || position == 0) -1 else position - 1 // Left
         neighbors[2] = rowNext * toInt(isBottom) // Bottom
         neighbors[3] = (rowNext + 1) * toInt(isRight || isBottom) // Downward Right Diagonal
         neighbors[4] = (rowNext - 1) * toInt(isLeft || isBottom) // Downward Left Diagonal
         neighbors[5] = rowPrev // Top
-        neighbors[6] = if (rowPrev + 1 == 0 || isRight) -1 else rowPrev + 1 // Upward Right Diagonal
+        neighbors[6] = if (isRight || rowPrev + 1 == 0) -1 else rowPrev + 1 // Upward Right Diagonal
         neighbors[7] = (rowPrev - 1) * toInt(isLeft || isTop) // Upward Left Diagonal
     }
 

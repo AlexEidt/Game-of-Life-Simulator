@@ -40,7 +40,6 @@ fun main() {
     panel.autoscrolls = true
     frame.add(scrollFrame)
 
-    var gameIterator = panel.board.iterator()
     // Map Icon Names to Icon Objects
     val icons = File(joinPath("src", "Icons")).listFiles().map { it.path }.associateBy(
         // Get Icon Name from file path
@@ -82,8 +81,8 @@ fun main() {
 
     buttons["Next"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent) {
-            if (gameIterator.hasNext()) {
-                gameIterator.next()
+            if (panel.board.hasNext()) {
+                panel.board.next()
                 frame.repaint()
                 if (IS_RECORDING) {
                     File(RECORDING_FILE).appendText("${panel.board}\n")
@@ -153,7 +152,6 @@ fun main() {
                         frame.add(scrollFrame)
                         // Fill in board
                         panel.board = Board(data.first, data.second)
-                        gameIterator = panel.board.iterator()
                         frame.revalidate()
                     }
                 }
