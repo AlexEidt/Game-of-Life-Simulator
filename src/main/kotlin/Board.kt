@@ -49,7 +49,7 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
         visited.clear()
         next.clear()
         for (position in coordinates) {
-            if (position !in visited && checkCurrent(position)) {
+            if (checkCurrent(neighbors1, position)) {
                 next.add(position)
             }
             visited.add(position)
@@ -67,6 +67,8 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
         coordinates.addAll(next)
     }
 
+    private fun toInt(bool: Boolean) = if (bool) -1 else 1
+
     /**
      * Given a certain position on the board, returns the coordinates of all
      * neighbors. Positions on the boundaries of the board feature neighbors that
@@ -81,14 +83,14 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
         val rowNext = position + size
         val rowPrev = position - size
 
-        neighbors[0] = if (isRight) -1 else position + 1 // Right
+        neighbors[0] = (position + 1) * toInt(isRight) // Right
         neighbors[1] = if (isLeft || position == 0) -1 else position - 1 // Left
-        neighbors[2] = if (isBottom) -1 else rowNext // Bottom
-        neighbors[3] = if (isRight || isBottom) -1 else rowNext + 1 // Downward Right Diagonal
-        neighbors[4] = if (isLeft || isBottom) -1 else rowNext - 1 // Downward Left Diagonal
+        neighbors[2] = rowNext * toInt(isBottom) // Bottom
+        neighbors[3] = (rowNext + 1) * toInt(isRight || isBottom) // Downward Right Diagonal
+        neighbors[4] = (rowNext - 1) * toInt(isLeft || isBottom) // Downward Left Diagonal
         neighbors[5] = rowPrev // Top
         neighbors[6] = if (isRight || rowPrev + 1 == 0) -1 else rowPrev + 1 // Upward Right Diagonal
-        neighbors[7] = if (isLeft || isTop) -1 else rowPrev - 1 // Upward Left Diagonal
+        neighbors[7] = (rowPrev - 1) * toInt(isLeft || isTop) // Upward Left Diagonal
     }
 
     /**
@@ -111,9 +113,9 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
      * Optimized version of "checkNeighbors" for when the current positions
      * are looked over since we know all of these positions are "true".
      */
-    private fun checkCurrent(position: Int): Boolean {
-        getNeighbors(neighbors1, position)
-        val valid = neighbors1.count { it >= 0 && it in coordinates }
+    private fun checkCurrent(neighbors: Array<Int>, position: Int): Boolean {
+        getNeighbors(neighbors, position)
+        val valid = neighbors.count { it >= 0 && it in coordinates }
         return valid == 2 || valid == 3
     }
 
