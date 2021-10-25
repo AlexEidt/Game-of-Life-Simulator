@@ -7,6 +7,7 @@ The simulator comes with the following features:
 * Zoomable and scrollable simulation playground
 * Optimized simulator which only simulates areas with live cells
 * Random board generation
+* Toggleable Grid Lines
 * PNG Capturing of current board state
 * Save the current board state and load it in later
 * Record the board during animation and convert to video
@@ -14,8 +15,7 @@ The simulator comes with the following features:
 
 # The App
 
-<img src="Documentation/documentation.gif" alt="GIF Showing the functionality of the Game of Life Simulator app" />
-<br />
+![Game of Life Simulator](https://youtu.be/1VX_Dk_YShU)
 
 ### Buttons/Icons Descriptions
 
@@ -30,7 +30,7 @@ Icon | Key | Description
 <img src="src/Icons/Open.png" alt="Search Files Icon" width=50px /> | `F` | Opens all `.golf` files and allows the user to load in a new simulation state.
 <img src="src/Icons/Zoom In.png" alt="Zoom In Files Icon" width=50px /> | `=` | Zooms in on the simulation board.
 <img src="src/Icons/Zoom Out.png" alt="Zoom Out Files Icon" width=50px /> | `-` | Zooms out on the simulation board.
-
+<img src="src/Icons/Grid Lines.png" alt="Grid Lines Files Icon" width=50px /> | `-` | Toggles simulation board grid lines.
 ## `golf` File Format and Loading Files
 
 When the user presses the `Save` button, the current state of the board will be saved in a `golf` (`G`ame `O`f `L`ife `F`ile) file with the following format:

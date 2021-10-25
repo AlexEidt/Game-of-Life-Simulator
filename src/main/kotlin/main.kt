@@ -41,11 +41,11 @@ fun main() {
     frame.add(scrollFrame)
 
     // Map Icon Names to Icon Objects
-    val icons = File(joinPath("src", "Icons")).listFiles().map { it.path }.associateBy(
-        // Get Icon Name from file path
-        { it.substring(it.lastIndexOf(File.separator) + 1, it.lastIndexOf(".")) },
-        { sizeIcon(ImageIcon(it)) }
+    val icons = File(joinPath("src", "Icons")).listFiles().associateBy(
+        { it.name.replace(".${it.extension}", "") },
+        { sizeIcon(ImageIcon(it.path)) }
     )
+    println(icons)
     val buttonKeys = mapOf(
         "Next" to "→",
         "Reset" to "←",
@@ -55,7 +55,8 @@ fun main() {
         "Record" to "R",
         "Open" to "F",
         "Zoom In" to "+",
-        "Zoom Out" to "-"
+        "Zoom Out" to "-",
+        "Grid Lines" to "G"
     )
     // Buttons
     val buttons = buttonKeys.keys.associateBy({ it }, { JButton("$it [${buttonKeys[it]}]", icons[it]) })
@@ -69,7 +70,8 @@ fun main() {
         "Record" to KeyEvent.VK_R,
         "Open" to KeyEvent.VK_F,
         "Zoom In" to KeyEvent.VK_EQUALS,
-        "Zoom Out" to KeyEvent.VK_MINUS
+        "Zoom Out" to KeyEvent.VK_MINUS,
+        "Grid Lines" to KeyEvent.VK_G
     )
     // Menu Panel on the Right with all Labels/Buttons.
     val menuPanel = JPanel(GridLayout(buttons.size, 1));
@@ -105,7 +107,7 @@ fun main() {
     buttons["Snapshot"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) = Thread {
             val file = createFile("${SNAPSHOTS_DIR}Snapshot", "png")
-            snapshot(panel.board, file)
+            snapshot(panel.board, file, panel.gridlines)
         }.start();
     })
     buttons["Save"]?.addActionListener(object : AbstractAction() {
@@ -198,6 +200,12 @@ fun main() {
                 frame.add(scrollFrame)
                 frame.revalidate()
             }
+        }
+    })
+    buttons["Grid Lines"]?.addActionListener(object : AbstractAction() {
+        override fun actionPerformed(e: ActionEvent?) {
+            panel.gridlines = !panel.gridlines
+            frame.repaint()
         }
     })
 

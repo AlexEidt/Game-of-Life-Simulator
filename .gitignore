@@ -2,7 +2,8 @@
 /out
 
 *.iml
-*.mp4
+app.mp4
+demo.mp4
 
 # Game of Life Simulator Generated File directories
 /Recordings
