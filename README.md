@@ -10,6 +10,7 @@ The simulator comes with the following features:
 * PNG Capturing of current board state
 * Save the current board state and load it in later
 * Record the board during animation and convert to video
+* Low memory usage
 
 # The App
 
