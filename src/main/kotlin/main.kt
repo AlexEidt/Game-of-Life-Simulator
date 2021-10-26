@@ -45,7 +45,6 @@ fun main() {
         { it.name.replace(".${it.extension}", "") },
         { sizeIcon(ImageIcon(it.path)) }
     )
-    println(icons)
     val buttonKeys = mapOf(
         "Next" to "→",
         "Reset" to "←",
