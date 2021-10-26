@@ -146,11 +146,7 @@ fun main() {
                         GRID = data.first
                         // Adjust zoom based on board size
                         panel.preferredSize = dimension()
-                        frame.remove(scrollFrame)
-                        scrollFrame = JScrollPane(panel)
-                        scrollFrame.verticalScrollBar.unitIncrement = 16
-                        scrollFrame.horizontalScrollBar.unitIncrement = 16
-                        frame.add(scrollFrame)
+                        scrollFrame = updateScrollFrame(frame, scrollFrame, panel)
                         // Fill in board
                         panel.board = Board(data.first, data.second)
                         frame.revalidate()
