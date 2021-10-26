@@ -26,7 +26,7 @@ class DrawPanel(var board: Board, var gridlines: Boolean = false) : JPanel() {
         }
         // Draw Squares for Game of Life Simulation.
         for (coordinate in board.coordinates) {
-            g.fillRect((coordinate % board.size) * size, (coordinate / board.size) * size, size, size)
+            g.fillRect(coordinate % board.size * size, coordinate / board.size * size, size, size)
         }
     }
 }
