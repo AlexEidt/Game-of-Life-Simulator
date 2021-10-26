@@ -13,6 +13,12 @@ import javax.swing.*
 import kotlin.collections.HashSet
 import kotlin.math.ceil
 import kotlin.math.sqrt
+import java.awt.event.WindowEvent
+
+import java.awt.event.WindowStateListener
+
+
+
 
 var GRID = 200 // Length of one side of Game of Life Grid.
 var RECORDING_FILE = "" // Recording file name
@@ -29,7 +35,8 @@ fun main() {
     File(SAVED_DIR).mkdir()       // Directory for .golf files
 
     val frame = JFrame("Conway's Game of Life")
-    var panel = DrawPanel(Board(GRID, HashSet()))
+    // Simulation panel
+    var panel = DrawPanel(Board(GRID))
 
     // Set Simulation Playground to be Scrollable.
     panel.isOpaque = true
@@ -92,21 +99,18 @@ fun main() {
         }
     })
     buttons["Reset"]?.addActionListener(object : AbstractAction() {
-        override fun actionPerformed(e: ActionEvent) {
-            panel.board.clear()
-            frame.repaint()
-        }
+        override fun actionPerformed(e: ActionEvent) = run { panel.board.clear(); frame.repaint() }
     })
     buttons["Random"]?.addActionListener(object : AbstractAction() {
-        override fun actionPerformed(e: ActionEvent) {
-            panel.board.random()
-            frame.repaint()
-        }
+        override fun actionPerformed(e: ActionEvent) = run { panel.board.random(); frame.repaint() }
     })
     buttons["Snapshot"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) = Thread {
-            val file = createFile("${SNAPSHOTS_DIR}Snapshot", "png")
-            snapshot(panel.board, file, panel.gridlines)
+            snapshot(
+                panel.board,
+                createFile("${SNAPSHOTS_DIR}Snapshot", "png"),
+                panel.gridlines
+            )
         }.start();
     })
     buttons["Save"]?.addActionListener(object : AbstractAction() {
@@ -176,12 +180,7 @@ fun main() {
         override fun actionPerformed(e: ActionEvent) {
             val currentSize = panel.preferredSize
             panel.preferredSize = Dimension(currentSize.width + GRID, currentSize.height + GRID)
-            frame.remove(scrollFrame)
-            scrollFrame = JScrollPane(panel)
-            scrollFrame.verticalScrollBar.unitIncrement = 16
-            scrollFrame.horizontalScrollBar.unitIncrement = 16
-            frame.add(scrollFrame)
-            frame.revalidate()
+            scrollFrame = updateScrollFrame(frame, scrollFrame, panel)
         }
     })
     buttons["Zoom Out"]?.addActionListener(object : AbstractAction() {
@@ -192,12 +191,7 @@ fun main() {
             val max = if (width > height) width else height
             if (max < currentSize.width - GRID) {
                 panel.preferredSize = Dimension(currentSize.width - GRID, currentSize.height - GRID)
-                frame.remove(scrollFrame)
-                scrollFrame = JScrollPane(panel)
-                scrollFrame.verticalScrollBar.unitIncrement = 16
-                scrollFrame.horizontalScrollBar.unitIncrement = 16
-                frame.add(scrollFrame)
-                frame.revalidate()
+                scrollFrame = updateScrollFrame(frame, scrollFrame, panel)
             }
         }
     })
@@ -233,9 +227,18 @@ fun main() {
     }
 
     frame.add(menuPanel, BorderLayout.EAST)
+    frame.isVisible = true
+    frame.size = Dimension(
+        Toolkit.getDefaultToolkit().screenSize.width / 2,
+        Toolkit.getDefaultToolkit().screenSize.height / 2
+    )
+    // When window is resized, make sure simulation panel isn't bigger than the scroll frame.
+    frame.addWindowStateListener {
+        panel.preferredSize = dimension()
+        scrollFrame = updateScrollFrame(frame, scrollFrame, panel)
+    }
     frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
     frame.extendedState = JFrame.MAXIMIZED_BOTH
-    frame.isVisible = true
 }
 
 /**
@@ -244,9 +247,7 @@ fun main() {
  * @param icon  Image Icon for button.
  * @return scaled Image Icon.
  */
-fun sizeIcon(icon: ImageIcon): ImageIcon {
-    return ImageIcon(icon.image.getScaledInstance(40, 40, Image.SCALE_DEFAULT))
-}
+fun sizeIcon(icon: ImageIcon): ImageIcon = ImageIcon(icon.image.getScaledInstance(40, 40, Image.SCALE_DEFAULT))
 
 /**
  * Gets the board state from a ".golf" file.
@@ -339,4 +340,23 @@ fun assertGrid(grid: Int): Boolean {
         return false
     }
     return true
+}
+
+/**
+ * Updates the scroll frame to adjust to the size of the simulation board when the user
+ * zooms in/out.
+ *
+ * @param frame         Main Frame the simulation runs on.
+ * @param scrollFrame   The scrollable frame the simulation playground is in.
+ * @param panel         The simulation playground.
+ * @return              The updated scroll frame.
+ */
+fun updateScrollFrame(frame: JFrame, scrollFrame: JScrollPane, panel: DrawPanel): JScrollPane {
+    frame.remove(scrollFrame)
+    val scrollFrame = JScrollPane(panel)
+    scrollFrame.verticalScrollBar.unitIncrement = 16
+    scrollFrame.horizontalScrollBar.unitIncrement = 16
+    frame.add(scrollFrame)
+    frame.revalidate()
+    return scrollFrame
 }

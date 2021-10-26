@@ -6,8 +6,8 @@
  *
  * Represents the Game of Life Simulation.
  *
- * @param size the size of the board. Board will always be a size x size square.
- * @param coordinates the cells of the board that are true.
+ * @param size          The size of the board. Board will always be a size x size square.
+ * @param coordinates   The cells of the board that are true.
  */
 class Board(val size: Int, val coordinates: HashSet<Int>) {
     private val visited: HashSet<Int> = HashSet()
@@ -16,6 +16,9 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
     private val neighbors1: Array<Int> = Array(8) { 0 }
     private val neighbors2: Array<Int> = Array(8) { 0 }
     private val neighbors3: Array<Int> = Array(8) { 0 }
+
+    // Secondary constructor without initial coordinate set.
+    constructor(size: Int) : this(size, HashSet())
 
     // Randomly fills in the board.
     fun random() {
@@ -33,10 +36,7 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
     fun removeValue(value: Int) = coordinates.remove(value)
 
     // Clears the board.
-    fun clear() {
-        coordinates.clear()
-        visited.clear()
-    }
+    fun clear() = coordinates.clear()
 
     /**
      * To run the simulation, the Board class features an "iterator" which will calculate
