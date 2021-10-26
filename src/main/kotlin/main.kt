@@ -13,11 +13,6 @@ import javax.swing.*
 import kotlin.collections.HashSet
 import kotlin.math.ceil
 import kotlin.math.sqrt
-import java.awt.event.WindowEvent
-
-import java.awt.event.WindowStateListener
-
-
 
 
 var GRID = 200 // Length of one side of Game of Life Grid.
@@ -27,6 +22,7 @@ var SNAPSHOTS_DIR = joinPath("Snapshots")
 var SAVED_DIR = joinPath("Saved")
 
 var IS_RECORDING = false
+
 
 fun main() {
     if (!assertGrid(GRID)) return
