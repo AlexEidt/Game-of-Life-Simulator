@@ -49,7 +49,7 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
         visited.clear()
         next.clear()
         for (position in coordinates) {
-            if (position !in visited && checkCurrent(neighbors1, position)) {
+            if (position !in visited && checkCurrent(position)) {
                 next.add(position)
             }
             visited.add(position)
@@ -111,9 +111,9 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
      * Optimized version of "checkNeighbors" for when the current positions
      * are looked over since we know all of these positions are "true".
      */
-    private fun checkCurrent(neighbors: Array<Int>, position: Int): Boolean {
-        getNeighbors(neighbors, position)
-        val valid = neighbors.count { it in coordinates }
+    private fun checkCurrent(position: Int): Boolean {
+        getNeighbors(neighbors1, position)
+        val valid = neighbors1.count { it in coordinates }
         return valid == 2 || valid == 3
     }
 
