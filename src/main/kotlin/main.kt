@@ -188,10 +188,7 @@ fun main() {
         }
     })
     buttons["Grid Lines"]?.addActionListener(object : AbstractAction() {
-        override fun actionPerformed(e: ActionEvent?) {
-            panel.gridlines = !panel.gridlines
-            frame.repaint()
-        }
+        override fun actionPerformed(e: ActionEvent?) = run { panel.gridlines = !panel.gridlines; frame.repaint() }
     })
 
     panel.addMouseMotionListener(object : MouseAdapter() {
