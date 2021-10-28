@@ -13,6 +13,12 @@ import javax.swing.*
 import kotlin.collections.HashSet
 import kotlin.math.ceil
 import kotlin.math.sqrt
+import java.awt.event.WindowEvent
+
+import java.awt.event.WindowAdapter
+
+
+
 
 
 var GRID = 200 // Length of one side of Game of Life Grid.
@@ -131,9 +137,10 @@ fun main() {
     })
     buttons["Open"]?.addActionListener(object : AbstractAction() {
         override fun actionPerformed(e: ActionEvent?) {
-            val fileFrame = JFrame("Load Game of Life Board")
-            val filePanel = JPanel(GridLayout(-1, 1))
             val currentDir = File(SAVED_DIR).listFiles().filter { it.name.endsWith(".golf") }
+            if (currentDir.isEmpty()) return
+            val fileFrame = JFrame("Showing ${currentDir.size} Game of Life Boards")
+            val filePanel = JPanel(GridLayout(-1, 1))
             for (file in currentDir) {
                 val fileButton = JButton(file.name, icons["File"])
                 fileButton.addActionListener {
