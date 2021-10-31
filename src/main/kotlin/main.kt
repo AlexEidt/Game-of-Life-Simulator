@@ -13,12 +13,6 @@ import javax.swing.*
 import kotlin.collections.HashSet
 import kotlin.math.ceil
 import kotlin.math.sqrt
-import java.awt.event.WindowEvent
-
-import java.awt.event.WindowAdapter
-
-
-
 
 
 var GRID = 200 // Length of one side of Game of Life Grid.
