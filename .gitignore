@@ -3,8 +3,9 @@
 
 *.iml
 *.mp4
+Main.java
 
 # Game of Life Simulator Generated File directories
-/Recordings
-/Snapshots
-/Saved
+/GameOfLife
+
+src/main/kotlin/META-INF
