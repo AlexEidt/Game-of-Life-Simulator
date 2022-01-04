@@ -21,16 +21,16 @@ The simulator comes with the following features:
 
 Icon | Key | Description
 --- | --- | ---
-<img src="src/Icons/Next.png" alt="Next Icon" width=50px /> | `RIGHT ARROW` | Moves the simulation to the next generation.
-<img src="src/Icons/Reset.png" alt="Reset Icon" width=50px /> | `BACKSPACE` | Clears the simulation board.
-<img src="src/Icons/Random.png" alt="Random Icon" width=50px /> | `D` | Randomly fills the simulation board.
-<img src="src/Icons/Save.png" alt="Save Icon" width=50px /> | `S` | Saves the current state of the board as a `.golf` file.
-<img src="src/Icons/Snapshot.png" alt="Snapshot Icon" width=50px /> | `C` | Saves the current state of the board as a `.png` file in the `Snapshots` directory which is automatically generated on startup.
-<img src="src/Icons/recordrecording.gif" alt="Recording Icon" width=50px /> | `R` | Toggles Recording Mode. If recording mode is on, any changes made to the board by clicking **NEXT** are recorded.
-<img src="src/Icons/Open.png" alt="Search Files Icon" width=50px /> | `F` | Opens all `.golf` files and allows the user to load in a new simulation state.
-<img src="src/Icons/Zoom In.png" alt="Zoom In Files Icon" width=50px /> | `=` | Zooms in on the simulation board.
-<img src="src/Icons/Zoom Out.png" alt="Zoom Out Files Icon" width=50px /> | `-` | Zooms out on the simulation board.
-<img src="src/Icons/Grid Lines.png" alt="Grid Lines Files Icon" width=50px /> | `G` | Toggles simulation board grid lines.
+<img src="src/main/resources/Icons/Next.png" alt="Next Icon" width=50px /> | `RIGHT ARROW` | Moves the simulation to the next generation.
+<img src="src/main/resources/Icons/Reset.png" alt="Reset Icon" width=50px /> | `BACKSPACE` | Clears the simulation board.
+<img src="src/main/resources/Icons/Random.png" alt="Random Icon" width=50px /> | `D` | Randomly fills the simulation board.
+<img src="src/main/resources/Icons/Save.png" alt="Save Icon" width=50px /> | `S` | Saves the current state of the board as a `.golf` file.
+<img src="src/main/resources/Icons/Snapshot.png" alt="Snapshot Icon" width=50px /> | `C` | Saves the current state of the board as a `.png` file in the `Snapshots` directory which is automatically generated on startup.
+<img src="src/main/resources/Icons/recordrecording.gif" alt="Recording Icon" width=50px /> | `R` | Toggles Recording Mode. If recording mode is on, any changes made to the board by clicking **NEXT** are recorded.
+<img src="src/main/resources/Icons/Open.png" alt="Search Files Icon" width=50px /> | `F` | Opens all `.golf` files and allows the user to load in a new simulation state.
+<img src="src/main/resources/Icons/Zoom_In.png" alt="Zoom In Files Icon" width=50px /> | `=` | Zooms in on the simulation board.
+<img src="src/main/resources/Icons/Zoom_Out.png" alt="Zoom Out Files Icon" width=50px /> | `-` | Zooms out on the simulation board.
+<img src="src/main/resources/Icons/Grid_Lines.png" alt="Grid Lines Files Icon" width=50px /> | `G` | Toggles simulation board grid lines.
 ## `golf` File Format and Loading Files
 
 When the user presses the `Save` button, the current state of the board will be saved in a `golf` (`G`ame `O`f `L`ife `F`ile) file with the following format:
