@@ -43,7 +43,7 @@ class GUI(var grid: Int) {
             "Zoom Out" to "-",
             "Grid Lines" to "G"
         )
-        val iconNames = arrayOf(*buttonKeys.keys.toTypedArray(), "Error", "File")
+        val iconNames = arrayOf(*buttonKeys.keys.toTypedArray(), "Error", "File", "Recording")
         // Map Icon Names to Icon Objects
         val icons = iconNames.associateBy({ it }, { sizeIcon(this.javaClass.getResource("/Icons/${it.replace(" ", "_")}.png")) })
 
