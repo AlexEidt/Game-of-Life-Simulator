@@ -9,9 +9,9 @@
  * @param size          The size of the board. Board will always be a size x size square.
  * @param coordinates   The cells of the board that are true.
  */
-class Board(val size: Int, val coordinates: HashSet<Int>) {
+class Board(val size: Int, var coordinates: HashSet<Int>) {
     private val visited: HashSet<Int> = HashSet()
-    private val next: MutableSet<Int> = mutableSetOf()
+    private var next: HashSet<Int> = HashSet()
 
     private val neighbors1: Array<Int> = Array(8) { 0 }
     private val neighbors2: Array<Int> = Array(8) { 0 }
@@ -63,8 +63,9 @@ class Board(val size: Int, val coordinates: HashSet<Int>) {
                 }
             }
         }
-        coordinates.clear()
-        coordinates.addAll(next)
+        val temp = coordinates
+        coordinates = next
+        next = temp
     }
 
     /**
