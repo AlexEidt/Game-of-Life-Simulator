@@ -33,7 +33,7 @@ class Board(val size: Int) {
 
     fun clear() = coordinates.clear()
 
-    fun isNotEmpty() = coordinates.isNotEmpty()
+    fun isNotEmpty(): Boolean = coordinates.isNotEmpty()
 
     /**
      * To run the simulation, the Board class features an "iterator" which will calculate
