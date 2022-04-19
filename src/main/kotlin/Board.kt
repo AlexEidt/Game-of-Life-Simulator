@@ -7,7 +7,6 @@
  * Represents the Game of Life Simulation.
  *
  * @param size          The size of the board. Board will always be a size x size square.
- * @param coordinates   The cells of the board that are true.
  */
 class Board(val size: Int) {
     var coordinates: HashSet<Int> = HashSet()
