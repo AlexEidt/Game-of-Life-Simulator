@@ -9,16 +9,14 @@
  * @param size          The size of the board. Board will always be a size x size square.
  * @param coordinates   The cells of the board that are true.
  */
-class Board(val size: Int, var coordinates: HashSet<Int>) {
+class Board(val size: Int) {
+    var coordinates: HashSet<Int> = HashSet()
     private val visited: HashSet<Int> = HashSet()
     private var next: HashSet<Int> = HashSet()
 
     private val neighbors1: Array<Int> = Array(8) { 0 }
     private val neighbors2: Array<Int> = Array(8) { 0 }
     private val neighbors3: Array<Int> = Array(8) { 0 }
-
-    // Secondary constructor without initial coordinate set.
-    constructor(size: Int) : this(size, HashSet())
 
     // Randomly fills in the board.
     fun random() {
@@ -29,14 +27,13 @@ class Board(val size: Int, var coordinates: HashSet<Int>) {
         coordinates.addAll((0 until size * size).shuffled().take((size * size * density).toInt()))
     }
 
-    // Adds a new square to the DrawPanel.
     fun addValue(value: Int) = coordinates.add(value)
 
-    // Removes a square from the DrawPanel.
     fun removeValue(value: Int) = coordinates.remove(value)
 
-    // Clears the board.
     fun clear() = coordinates.clear()
+
+    fun isNotEmpty() = coordinates.isNotEmpty()
 
     /**
      * To run the simulation, the Board class features an "iterator" which will calculate

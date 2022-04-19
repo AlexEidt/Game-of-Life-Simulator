@@ -98,7 +98,7 @@ class GUI(var grid: Int) {
         })
         buttons["Save"]?.addActionListener(object : AbstractAction() {
             override fun actionPerformed(e: ActionEvent?) {
-                if (panel.board.coordinates.isNotEmpty()) {
+                if (panel.board.isNotEmpty()) {
                     createFile("${SAVED_DIR}GameOfLife", "golf").writeText("$grid\n${panel.board}")
                 }
             }
@@ -136,7 +136,9 @@ class GUI(var grid: Int) {
                             panel.preferredSize = dimension(grid)
                             scrollFrame = updateScrollFrame(frame, scrollFrame, panel)
                             // Fill in board
-                            panel.board = Board(grid, coordinates)
+                            panel.board = Board(grid)
+                            for (value in coordinates)
+                                panel.board.addValue(value)
                             frame.revalidate()
                         }
                     }
