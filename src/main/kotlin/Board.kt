@@ -15,7 +15,6 @@ class Board(val size: Int) {
 
     private val neighbors1: Array<Int> = Array(8) { 0 }
     private val neighbors2: Array<Int> = Array(8) { 0 }
-    private val neighbors3: Array<Int> = Array(8) { 0 }
 
     // Randomly fills in the board.
     fun random() {
@@ -43,14 +42,17 @@ class Board(val size: Int) {
         visited.clear()
         next.clear()
         for (position in coordinates) {
-            if (position !in visited && checkCurrent(position)) {
-                next.add(position)
+            if (position !in visited) {
+                if (checkCurrent(position)) {
+                    next.add(position)
+                }
+            } else {
+                getNeighbors(neighbors1, position)
             }
             visited.add(position)
-            getNeighbors(neighbors2, position)
-            for (neighbor in neighbors2) {
+            for (neighbor in neighbors1) {
                 if (neighbor >= 0 && neighbor !in visited) {
-                    if (checkNeighbors(neighbors3, neighbor)) {
+                    if (checkNeighbors(neighbor)) {
                         next.add(neighbor)
                     }
                     visited.add(neighbor)
@@ -91,9 +93,9 @@ class Board(val size: Int) {
      * will make it to the next generation given its neighbors and the rules specified
      * in this method.
      */
-    private fun checkNeighbors(neighbors: Array<Int>, position: Int): Boolean {
-        getNeighbors(neighbors, position)
-        val valid = neighbors.count { it in coordinates }
+    private fun checkNeighbors(position: Int): Boolean {
+        getNeighbors(neighbors2, position)
+        val valid = neighbors2.count { it in coordinates }
         val self = position in coordinates
         // Any true cell with fewer than two true neighbors becomes false.
         // Any true cell with 2 or 3 true neighbors remains true.
