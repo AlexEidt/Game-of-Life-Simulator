@@ -98,7 +98,7 @@ class GUI(var grid: Int) {
         })
         buttons["Save"]?.addActionListener(object : AbstractAction() {
             override fun actionPerformed(e: ActionEvent?) {
-                if (panel.board.isNotEmpty()) {
+                if (panel.board.hasNext()) {
                     createFile("${SAVED_DIR}GameOfLife", "golf").writeText("$grid\n${panel.board}")
                 }
             }
